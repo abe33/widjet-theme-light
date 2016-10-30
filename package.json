@@ -1,0 +1,67 @@
+{
+  "name": "widjet-theme-light",
+  "version": "0.0.0",
+  "scripts": {
+    "rollup": "rollup -c && babel dist/index.es6 > dist/index.js",
+    "sass": "sass --load-path src src/index.sass dist/index.css"
+  },
+  "keywords": [
+    "widgets",
+    "widget",
+    "web",
+    "widjet",
+    "theme",
+    "light"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/abe33/widjet-theme-light.git"
+  },
+  "bugs": "http://github.com/abe33/widjet-theme-light/issues",
+  "commits": "http://github.com/abe33/widjet-theme-light/commits",
+  "author": "Cédric Néhémie <cedric.nehemie@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.3.17",
+    "babel-eslint": "^7.0.0",
+    "babel-plugin-transform-es3-member-expression-literals": "^6.8.0",
+    "babel-plugin-transform-es3-property-literals": "^6.8.0",
+    "babel-preset-es2015": "^6.3.13",
+    "node-sass": "^3.10.1",
+    "rollup": "^0.36.3",
+    "rollup-plugin-commonjs": "^5.0.4",
+    "rollup-plugin-includepaths": "^0.1.6",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "standard": "^5.4.1",
+    "widjet": "^1.0.2",
+    "widjet-select-multiple": "^1.0.0",
+    "widjet-text-editor": "^1.0.0",
+    "widjet-validation": "^1.0.2"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "globals": [
+      "it",
+      "describe",
+      "beforeEach",
+      "afterEach"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      ["transform-es2015-modules-commonjs", {"loose": true}],
+      "transform-es3-member-expression-literals",
+      "transform-es3-property-literals"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  }
+}
