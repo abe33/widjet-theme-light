@@ -2,8 +2,11 @@
   "name": "widjet-theme-light",
   "version": "0.0.0",
   "scripts": {
-    "rollup": "rollup -c && babel dist/index.es6 > dist/index.js",
-    "sass": "sass --load-path src src/index.sass dist/index.css"
+    "dist:mkdir": "mkdir -p dist",
+    "dist:copy": "npm run dist:mkdir && cp demo/index.html dist/index.html",
+    "rollup": "npm run dist:mkdir && rollup -c && babel dist/index.es6 > dist/index.js",
+    "sass": "npm run dist:mkdir && sass --load-path src src/index.sass dist/index.css",
+    "dist": "npm run dist:copy && npm run rollup && npm run sass"
   },
   "keywords": [
     "widgets",
@@ -36,6 +39,7 @@
     "widjet": "^1.0.2",
     "widjet-select-multiple": "^1.0.0",
     "widjet-text-editor": "^1.0.0",
+    "widjet-utils": "^0.3.4",
     "widjet-validation": "^1.0.2"
   },
   "standard": {
@@ -52,7 +56,12 @@
       "es2015"
     ],
     "plugins": [
-      ["transform-es2015-modules-commonjs", {"loose": true}],
+      [
+        "transform-es2015-modules-commonjs",
+        {
+          "loose": true
+        }
+      ],
       "transform-es3-member-expression-literals",
       "transform-es3-property-literals"
     ],

@@ -3489,7 +3489,7 @@ widjet-text-editor:
     widjet-disposables "*"
     widjet-utils "*"
 
-widjet-utils@*, widjet-utils@^0.3.0, widjet-utils@^0.3.3:
+widjet-utils, widjet-utils@*, widjet-utils@^0.3.0, widjet-utils@^0.3.3:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/widjet-utils/-/widjet-utils-0.3.4.tgz#8a250a7d11463b1de7c2e20addd61e6da90cfb78"
   dependencies:

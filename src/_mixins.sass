@@ -1,0 +1,27 @@
+=vendor-prefix($name, $argument...)
+  -webkit-#{$name}: #{$argument}
+  -moz-#{$name}: #{$argument}
+  -ms-#{$name}: #{$argument}
+  -o-#{$name}: #{$argument}
+  #{$name}: #{$argument}
+
+=transform($value)
+  +vendor-prefix(transform, $value)
+
+=transform-origin($value)
+  +vendor-prefix(transform-origin, $value)
+
+=bounds($top: initial, $left: initial, $bottom: initial, $right: initial)
+  top: $top
+  left: $left
+  bottom: $bottom
+  right: $right
+
+=absolute($top: initial, $left: initial, $bottom: initial, $right: initial)
+  position: absolute
+  +bounds($top, $left, $bottom, $right)
+
+=box($width: auto, $height: $width)
+  display: block
+  width: $width
+  height: $height

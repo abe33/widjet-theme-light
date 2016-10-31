@@ -1,0 +1,320 @@
+@import mixins
+@import defaults
+
+%flex-container
+  display: flex
+  width: 100%
+  height: 100%
+
+.flex-row
+  @extend %flex-container
+  flex-direction: row
+
+.flex-column
+  @extend %flex-container
+  flex-direction: column
+
+.flex-grow
+  flex: 1 1 0
+
+input[type="color"]
+  cursor: pointer
+
+.btn
+  background: white
+  border: 1px solid $color-grey-light
+  color: $color-grey
+  line-height: 1em
+  padding: $buttons-padding
+  text-align: center
+  text-transform: uppercase
+
+  &:hover
+    background: $color-grey-very-light
+
+.btn-group
+  @extend .flex-row
+  border: 1px solid $color-grey-light
+
+  input[type="checkbox"], input[type="radio"]
+    display: none
+
+  .btn
+    @extend .flex-grow
+    padding-left: 0
+    padding-right: 0
+    border: none
+
+    & + input + .btn, & + .btn
+      border-left: 1px solid $color-grey-light
+
+  input:checked + label
+    background: $color-green
+    color: white
+    text-shadow: 0 0 4px darken(desaturate($color-green, 40%), 20%)
+
+  &.dark
+    border: 1px solid $color-grey-very-dark
+
+    .btn-app
+      background: $color-grey-dark
+
+      & + input + .btn, & + .btn
+        border-left: 1px solid $color-grey-very-dark
+
+    input:checked + label
+      background: $color-green
+      color: white
+      text-shadow: none
+
+.field
+  font-size: 0.75em
+  margin: 0 (-$half-padding)
+  padding: $half-padding
+  border-bottom: 1px solid $color-grey-light
+  position: relative
+
+  &:first-child
+    margin-top: -$half-padding
+
+  &.has-success
+    input, textarea, .select, .btn-group
+      border-color: $color-green
+
+    .feedback-icon
+      color: $color-green
+
+  &.has-error
+    input, textarea, .select, .btn-group
+      border-color: $color-red
+
+    .feedback-icon
+      color: $color-red
+
+    &.boolean label:before
+      border-color: $color-red
+
+  &.has-success, &.has-error
+    label div
+      display: inline-block
+      margin-left: $quarter-padding
+
+    .feedback-icon
+      margin-right: $quarter-padding
+
+    &.boolean .feedback-icon
+      display: none
+
+  p
+    font-size: 0.9em
+    font-style: italic
+    font-weight: 500
+    color: $color-grey
+
+  input, textarea, select
+    font-size: 1em
+    margin-bottom: 0
+
+  input[type='color']
+    height: 28px
+    padding: 3px
+
+  textarea
+    min-height: 72px
+    max-height: 520px
+    resize: vertical
+
+  label
+    font-weight: normal
+    margin-bottom: 0
+
+    em
+      color: $color-grey
+
+    & + p
+      margin-top: 3px
+      margin-bottom: $quarter-padding
+
+    & + input, & + .controls, & + .select, & + .select-multiple, & + textarea, & + .btn-group, & + .markdown-editor
+      margin-top: $quarter-padding
+
+  &.boolean
+    label + p
+      margin-top: $quarter-padding
+      margin-bottom: 0
+
+  &.image
+    progress
+      width: 100%
+      display: none
+
+    input[type="file"]
+      opacity: 0
+      z-index: 3
+      margin: 0
+      height: 100%
+      width: 100%
+      cursor: pointer
+      +absolute(0,0,0,0)
+
+    .controls
+      background: white
+      border: 1px solid $color-grey-light
+      position: relative
+      height: auto
+      min-height: 100px
+
+      &:before
+        content: '\f030'
+        font-family: $font-icon
+        font-size: 4em
+        color: $color-grey-light
+        +absolute(50%, 50%)
+        +transform(translate(-50%, -50%))
+
+      label
+        display: block
+        +absolute(0,0,0,0)
+
+      .preview
+        min-height: 21px
+
+        img
+          position: relative
+          z-index: 2
+          margin: 0 auto
+          max-width: 220px
+          max-height: 220px
+          display: block
+
+    .meta
+      @extend .flex-row
+      margin-top: $quarter-padding
+
+      > *
+        @extend .flex-grow
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        width: 15%
+        flex-basis: 15%
+        line-height: 1.4em
+
+        &.name
+          width: 55%
+          flex-basis: 55%
+
+          &:not(:empty):before
+            content: '\f1c5'
+            font-family: $font-icon
+            margin-right: $quarter-padding
+
+        &.size
+          text-align: right
+
+        &.dimensions
+          text-align: center
+
+    &.has-error .controls
+      border-color: $color-red
+
+    &.has-success .controls
+      border-color: $color-green
+
+    &.loading
+      input[type="file"], .controls label
+        display: none
+
+  &.markdown
+    &.has-error .btn-group,
+    &.has-success .btn-group,
+      border-color: $color-grey-light
+
+.markdown-editor
+  .toolbar
+    @extend .flex-row
+    background: $color-grey-very-light
+    border: 1px solid $color-grey-light
+    border-bottom: none
+    padding: $quarter-padding
+
+    .btn-group
+      width: auto
+      height: auto
+
+      & + .btn-group
+        margin-left: $quarter-padding
+
+      .btn
+        padding: $buttons-padding
+
+  textarea
+    margin: 0
+
+.select
+  background: white
+  border: 1px solid $color-grey-light
+  position: relative
+
+  &:after
+    content: '\f078'
+    font-family: $font-icon
+    margin-top: -0.5em
+    +absolute(50%, initial, initial, 1em)
+
+  select
+    width: 100%
+    color: $color-grey
+    padding: $input-padding
+    cursor: pointer
+    border: none
+    box-shadow: none
+    background-color: transparent
+    background-image: none
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+
+.select-multiple
+  background: white
+  border: 1px solid $color-grey-light
+  position: relative
+  min-height: 28px
+
+  select[multiple]
+    display: none
+
+  select:not([multiple])
+    opacity: 0
+    width: 100%
+    cursor: pointer
+    +absolute(0,0,0,0)
+
+  .values
+    overflow: hidden
+    padding: $quarter-padding 0 0 $quarter-padding
+
+    .option
+      padding: $quarter-padding ($padding + $quarter-padding) $quarter-padding $quarter-padding
+      display: inline-block
+      position: relative
+      float: left
+      background: $color-grey-very-light
+      border: 1px solid $color-grey-light
+      margin-right: $quarter-padding
+      margin-bottom: $quarter-padding
+
+      .label
+        font-weight: normal
+        margin: 0
+        font-size: 1em
+        line-height: 1em
+
+      button
+        background: $color-grey-light
+        color: $color-grey
+        border: none
+        padding: 0
+        cursor: pointer
+        +box(1.4em)
+        +absolute(0.35em, initial, initial, 0.35em)
