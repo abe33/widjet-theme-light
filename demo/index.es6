@@ -18,10 +18,13 @@ const radioCollectionPredicate = i =>
 widgets('select-multiple', 'select[multiple]', {on: 'load'})
 widgets('text-editor', '.markdown-editor', {
   on: 'load',
+  blockquote: Markdown.blockquote,
+  codeBlock: Markdown.codeBlock,
   unorderedList: Markdown.unorderedList,
   orderedList: Markdown.orderedList,
   repeatOrderedList: Markdown.repeatOrderedList
 })
+widgets('form-validation', 'form', {on: 'load'})
 widgets('live-validation', '[required]', {
   on: 'load',
   resolvers: [

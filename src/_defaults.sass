@@ -1,14 +1,16 @@
 $color-grey-extra-light: #f7f7f7 !default
 $color-grey-super-light: #f0f0f0 !default
 $color-grey-very-light: #dcdcdc !default
-$color-grey-very-light-2: #d3d3d3 !default
-$color-grey-light: #a5a5a5 !default
+$color-grey-light: #d3d3d3 !default
+$color-grey-medium-light: #a5a5a5 !default
 $color-grey: #848484 !default
+$color-grey-medium-dark: #797979 !default
 $color-grey-dark: #555 !default
 $color-grey-very-dark: #333 !default
 $color-grey-super-dark: #212121 !default
 
 $color-green: #b2c500 !default
+$color-dark-green: darken(desaturate($color-green, 40%), 20%) !default
 $color-red: #eb212e !default
 
 $padding: 1em !default
@@ -17,7 +19,9 @@ $half-padding: $padding / 2 !default
 $double-padding: $padding * 2 !default
 $quadruple-padding: $padding * 4 !default
 
-$buttons-padding: $quarter-padding $half-padding !default
-$input-padding: $quarter-padding $half-padding !default
+$button-padding: $quarter-padding $half-padding !default
+$label-button-padding: ($quarter-padding + 0.1em) $half-padding ($quarter-padding - 0.1em) !default
+$input-padding: ($quarter-padding + 0.1em) $half-padding ($quarter-padding - 0.1em) !default
 
 $font-icon: 'FontAwesome' !default
+$font-interface: 'Lato', 'Helvetica', 'Helvetica Neue', 'Arial' !default

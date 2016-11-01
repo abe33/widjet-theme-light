@@ -7,7 +7,9 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="./index.css"/>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato:400,300,100,700,400italic"/>
     <script type="application/javascript" src="./index.js"></script>
+
     <style>
       form {
         margin: 40px auto;
@@ -19,32 +21,40 @@
   <body>
     <form novalidate>
       <div class="field markdown">
-        <label for="content-1">Contenu</label>
-        <p>Hint for input of type <code>content</code>. Hints support markdown.</p>
+        <label for="content-1">markdown</label>
+        <p>Hint for input of type <code>markdown</code>.</p>
 
         <div class="markdown-editor">
           <div class="toolbar">
             <div class="btn-group">
-              <button class="btn" title="Gras (ctrl+b)" data-wrap="**|**" data-keystroke="ctrl-b">
+              <button type="button" class="btn" title="Gras (ctrl+b)" data-wrap="**|**" data-keystroke="ctrl-b">
                 <i class="fa fa-bold"></i>
               </button>
-              <button class="btn" title="Italique (ctrl+i)" data-wrap="*|*" data-keystroke="ctrl-i">
+              <button type="button" class="btn" title="Italique (ctrl+i)" data-wrap="*|*" data-keystroke="ctrl-i">
                 <i class="fa fa-italic"></i>
               </button>
-              <button class="btn" title="Rayé (ctrl+s)" data-wrap="~~|~~" data-keystroke="ctrl-s">
+              <button type="button" class="btn" title="Rayé (ctrl+s)" data-wrap="~~|~~" data-keystroke="ctrl-s">
                 <i class="fa fa-strikethrough"></i>
               </button>
             </div>
 
             <div class="btn-group">
-              <button class="btn" title="Lien (ctrl+a)" data-wrap="[|]($url)" data-keystroke="ctrl-l">
+              <button type="button" class="btn" title="Lien (ctrl+a)" data-wrap="[|]($url)" data-keystroke="ctrl-l">
                 <i class="fa fa-chain"></i>
               </button>
-              <button class="btn" title="Unordered List (ctrl+u)" data-wrap="- |" data-keystroke="ctrl-u" data-next-line-repeater='- '>
+              <button type="button" class="btn" title="Unordered List (ctrl+u)" data-wrap="- |" data-keystroke="ctrl-u" data-next-line-repeater='- '>
                 <i class="fa fa-list-ul"></i>
               </button>
-              <button class="btn" title="Ordered List (ctrl+o)" data-wrap="1. |" data-keystroke="ctrl-o" data-next-line-repeater='repeatOrderedList'>
+              <button type="button" class="btn" title="Ordered List (ctrl+o)" data-wrap="1. |" data-keystroke="ctrl-o" data-next-line-repeater='repeatOrderedList'>
                 <i class="fa fa-list-ol"></i>
+              </button>
+
+              <button type="button" class="btn" data-wrap='blockquote' data-keystroke='ctrl-b' data-next-line-repeater='> '>
+                <i class="fa fa-quote-left"></i>
+              </button>
+
+              <button type="button" class="btn" data-wrap='codeBlock' data-keystroke='ctrl-k' data-next-line-repeater='    '>
+                <i class="fa fa-code"></i>
               </button>
             </div>
           </div>
@@ -54,58 +64,64 @@
       </div>
 
       <div class="field boolean checkbox">
-        <input id="boolean-1" data-name="boolean" type="checkbox" required>
+        <input class="boolean" id="boolean-1" data-name="boolean" type="checkbox" required>
         <label for="boolean-1">boolean</label>
-        <p>Hint for input of type <code>boolean</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>boolean</code>.</p>
       </div>
 
       <div class="field string">
-        <label for="string-1">string <em> - Optionnel</em></label>
-        <p>Hint for input of type <code>string</code>. Hints support markdown.</p>
+        <label for="string-1">string <em> - Optional</em></label>
+        <p>Hint for input of type <code>string</code>.</p>
         <input id="string-1" data-name="string" value="" placeholder="..." type="text">
       </div>
 
       <div class="field string">
         <label for="multiline_string-1">multiline_string</label>
-        <p>Hint for input of type <code>string</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>string</code>.</p>
         <textarea id="multiline_string-1" data-name="multiline_string" placeholder="..." style="height: 70px;" required></textarea>
       </div>
 
       <div class="field date">
         <label for="date-1">date</label>
-        <p>Hint for input of type <code>date</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>date</code>.</p>
         <input id="date-1" value="" data-name="date" placeholder="jj/mm/aaaa" type="date" required>
       </div>
 
       <div class="field datetime"><label for="datetime-1">datetime</label>
-        <p>Hint for input of type <code>datetime</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>datetime</code>.</p>
         <input id="datetime-1" value="" data-name="datetime" placeholder="jj/mm/aaaa hh:mm:ss" type="datetime" required>
       </div>
 
       <div class="field time">
         <label for="time-1">time</label>
-        <p>Hint for input of type <code>time</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>time</code>.</p>
         <input id="time-1" value="" data-name="time" placeholder="hh:mm:ss" type="time" required>
       </div>
 
       <div class="field float">
         <label for="float-1">float</label>
-        <p>Hint for input of type <code>float</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>float</code>.</p>
         <input id="float-1" step="1" value="" placeholder="0,12345" data-name="float" type="number" required>
       </div>
 
       <div class="field integer">
         <label for="integer-1">integer</label>
-        <p>Hint for input of type <code>integer</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>integer</code>.</p>
         <input id="integer-1" step="1" value="" placeholder="12345" data-name="integer" type="number" required>
       </div>
 
-      <!-- <div class="field image">
-        <label for="image-1">Image<em> - 680x340</em></label>
-        <p>Hint for input of type <code>image</code>. Hints support markdown.</p>
+      <div class="field range">
+        <label for="range-1">range</label>
+        <p>Hint for input of type <code>range</code>.</p>
+        <input id="range-1" min="0" max="100" step="1" value="10" placeholder="20" data-name="range" type="range" required>
+      </div>
+
+      <div class="field image">
+        <label for="image-1">Image<em> - Recommended size = 680x340</em></label>
+        <p>Hint for input of type <code>image</code>.</p>
 
         <div class="controls">
-          <input value="" type="hidden">
+          <input value="" type="hidden" required>
           <label for="image-1"></label>
           <input id="image-1" data-size="680,340,widescreen" placeholder="http://..." data-name="image" class="local-file-upload-handled" type="file">
 
@@ -119,17 +135,17 @@
           <div class="dimensions"></div>
           <div class="size"></div>
         </div>
-      </div> -->
+      </div>
 
       <div class="field color">
         <label for="color-1">color</label>
-        <p>Hint for input of type <code>color</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>color</code>.</p>
         <input id="color-1" data-name="color" value="" type="color" required>
       </div>
 
       <div class="field collection">
         <label for="inline_collection-1">inline_collection</label>
-        <p>Hint for input of type <code>collection</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>collection</code>.</p>
 
         <div class="btn-group">
           <input required id="inline_collection-1-foo" data-name="inline_collection" value="foo" name="inline_collection" type="radio">
@@ -145,7 +161,7 @@
 
       <div class="field collection">
         <label for="multiple_inline_collection-1">multiple_inline_collection</label>
-        <p>Hint for input of type <code>collection</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>collection</code>.</p>
         <div class="btn-group">
           <input required id="multiple_inline_collection-1-a" data-name="multiple_inline_collection" value="a" name="multiple_inline_collection" type="checkbox">
           <label for="multiple_inline_collection-1-a" class="btn">a</label>
@@ -193,7 +209,7 @@
 
       <div class="field collection">
         <label for="select_collection-1">select_collection</label>
-        <p>Hint for input of type <code>collection</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>collection</code>.</p>
 
         <div class="select">
           <select id="select_collection-1" data-name="select_collection" required>
@@ -217,7 +233,7 @@
 
       <div class="field collection">
         <label for="multiple_select_collection-1">multiple_select_collection</label>
-        <p>Hint for input of type <code>collection</code>. Hints support markdown.</p>
+        <p>Hint for input of type <code>collection</code>.</p>
 
         <select id="multiple_select_collection-1" data-name="multiple_select_collection" multiple required>
           <option value="a">a</option>
@@ -235,6 +251,10 @@
           <option value="m">m</option>
           <option value="n">n</option>
         </select>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn">Submit</button>
       </div>
     </form>
   </body>

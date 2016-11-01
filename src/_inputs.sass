@@ -1,0 +1,85 @@
+input, textarea, select
+  font-size: 1em
+  margin-bottom: 0
+  +appearance(none)
+
+  +placeholder
+    color: $color-grey
+
+input, textarea
+  background: white
+  border: 1px solid $color-grey-light
+  border-top-width: 2px
+  line-height: 1em
+  padding: $input-padding
+  width: 100%
+
+input[type="checkbox"], input[type="radio"]
+  display: none
+
+input[type="color"]
+  cursor: pointer
+  height: 2em
+  padding: $quarter-padding $half-padding
+
+input[type="range"]
+  margin: 0
+  padding: 0
+  border: none
+  background: transparent
+
+  +range-track
+    background: $color-grey-light
+    border: none
+
+    +box(100%, 1px)
+
+  +range-thumb
+    border: 1px solid $color-grey-light
+    background: $color-grey-super-light
+    border-radius: 50%
+    cursor: grab
+
+    +box(1em)
+
+    &:active
+      cursor: grabbing
+
+textarea
+  min-height: 4em
+  max-height: 10em
+  line-height: 1.2em
+  resize: vertical
+
+input[type="checkbox"].boolean + label
+  cursor: pointer
+  font-weight: normal
+  margin-bottom: 0
+  margin-top: $quarter-padding
+
+  &:before
+    overflow: hidden
+    background: white
+    vertical-align: middle
+    margin-right: $half-padding
+    text-indent: -2em
+    color: white
+    border: 1px solid $color-grey-light
+    font-size: 0.8em
+    line-height: 1.4em
+    margin-top: -0.2em
+    content: '\f00c'
+    font-family: $font-icon
+
+    +box-inline(1.4em)
+    +transition(background-color 0.2s, border-color 0.2s, text-indent 0.3s)
+
+  &:hover:before, &:focus:before, &:active:before
+    border-color: $color-grey
+
+input[type="checkbox"].boolean:checked + label
+  &:before
+    text-indent: 0.2em
+    background: $color-green
+    border-color: lighten($color-dark-green, 20%)
+    text-shadow: 0 0 4px $color-dark-green

@@ -1,3 +1,11 @@
+=webkit-only()
+  @media screen and (-webkit-min-device-pixel-ratio:0)
+    @content
+
+=gecko-only()
+  @-moz-document url-prefix()
+    @content
+
 =vendor-prefix($name, $argument...)
   -webkit-#{$name}: #{$argument}
   -moz-#{$name}: #{$argument}
@@ -5,11 +13,17 @@
   -o-#{$name}: #{$argument}
   #{$name}: #{$argument}
 
-=transform($value)
+=transform($value...)
   +vendor-prefix(transform, $value)
 
-=transform-origin($value)
+=transition($value...)
+  +vendor-prefix(transition, $value)
+
+=transform-origin($value...)
   +vendor-prefix(transform-origin, $value)
+
+=appearance($value...)
+  +vendor-prefix(appearance, $value)
 
 =bounds($top: initial, $left: initial, $bottom: initial, $right: initial)
   top: $top
@@ -25,3 +39,55 @@
   display: block
   width: $width
   height: $height
+
+=box-inline($width: auto, $height: $width)
+  display: inline-block
+  width: $width
+  height: $height
+
+=placeholder()
+  &::-webkit-input-placeholder
+    @content
+
+  &:-moz-placeholder
+    @content
+
+  &::-moz-placeholder
+    @content
+
+  &:-ms-input-placeholder
+    @content
+
+  &::placeholder
+    @content
+
+=range-thumb()
+  &::-webkit-slider-thumb
+    -webkit-appearance: none
+    @content
+
+  &::-moz-range-thumb
+    @content
+
+  & .thumb
+    @content
+
+=range-track()
+  & .track
+    @content
+
+  +webkit-only
+    &
+      -webkit-appearance: none
+      @content
+
+  &::-moz-range-track
+    @content
+
+=inner-spin()
+  &::-webkit-inner-spin-button
+    @content
+
+=outer-spin
+  &::-webkit-outer-spin-button
+    @content

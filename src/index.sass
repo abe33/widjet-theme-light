@@ -1,114 +1,67 @@
 @import mixins
 @import defaults
+@import flex
+@import buttons
+@import inputs
+
+html, body, input, textarea, select
+  font-family: $font-interface
 
 *
   box-sizing: border-box
 
-%flex-container
-  display: inline-table
-  display: flex
-  width: 100%
-  height: 100%
+.text-red
+  color: $color-red
 
-.flex-row
-  @extend %flex-container
-  flex-direction: row
-
-.flex-column
-  @extend %flex-container
-  flex-direction: column
-
-.flex-grow
-  display: table-cell
-  flex: 1 1 0
-
-input[type="color"]
-  cursor: pointer
-
-.btn
-  background: white
-  border: 1px solid $color-grey-light
-  color: $color-grey
-  line-height: 1em
-  padding: $buttons-padding
-  text-align: center
-  text-transform: uppercase
-
-  &:hover
-    background: $color-grey-very-light
-
-.btn-group
-  @extend .flex-row
-  border: 1px solid $color-grey-light
-
-  input[type="checkbox"], input[type="radio"]
-    display: none
-
-  .btn
-    @extend .flex-grow
-    padding-left: 0
-    padding-right: 0
-    border: none
-
-    & + input + .btn, & + .btn
-      border-left: 1px solid $color-grey-light
-
-  input:checked + label
-    background: $color-green
-    color: white
-    text-shadow: 0 0 4px darken(desaturate($color-green, 40%), 20%)
-
-  &.dark
-    border: 1px solid $color-grey-very-dark
-
-    .btn-app
-      background: $color-grey-dark
-
-      & + input + .btn, & + .btn
-        border-left: 1px solid $color-grey-very-dark
-
-    input:checked + label
-      background: $color-green
-      color: white
-      text-shadow: none
+.form-actions
+  font-size: 0.85em
+  padding: $half-padding
 
 .field
-  font-size: 0.75em
-  margin: 0 (-$half-padding)
-  padding: $half-padding
-  border-bottom: 1px solid $color-grey-light
   position: relative
-
-  &:first-child
-    margin-top: -$half-padding
+  font-size: 0.85em
+  padding: $half-padding
+  margin-bottom: $padding
 
   &.has-success
-    input, textarea, .select, .btn-group
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar
       border-color: $color-green
 
-    .feedback-icon
+    .btn-group
+      background: $color-green
+
+    &.image .controls:before, .feedback-icon
       color: $color-green
 
   &.has-error
-    input, textarea, .select, .btn-group
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar
       border-color: $color-red
 
-    .feedback-icon
+    .btn-group
+      background: $color-red
+
+    &.image .controls:before, .feedback-icon
       color: $color-red
 
     &.boolean label:before
       border-color: $color-red
 
   &.has-success, &.has-error
-    label div
-      display: inline-block
-      margin-left: $quarter-padding
+    > label
+      position: relative
+      padding-left: 1.1em
 
-    .feedback-icon
-      margin-right: $quarter-padding
+      .feedback-icon
+        +absolute(-0.05em, 0)
 
-    &.boolean .feedback-icon
-      display: none
+      div
+        display: inline-block
+        margin-left: $quarter-padding
+
+    &.boolean label
+      padding-left: 0
+      .feedback-icon
+        display: none
 
   p
     font-size: 0.9em
@@ -116,18 +69,8 @@ input[type="color"]
     font-weight: 500
     color: $color-grey
 
-  input, textarea, select
-    font-size: 1em
-    margin-bottom: 0
-
-  input[type='color']
-    height: 28px
-    padding: 3px
-
-  textarea
-    min-height: 72px
-    max-height: 520px
-    resize: vertical
+    code
+      font-size: 1.2em
 
   label
     font-weight: normal
@@ -238,7 +181,7 @@ input[type="color"]
 .markdown-editor
   .toolbar
     @extend .flex-row
-    background: $color-grey-very-light
+    background: $color-grey-super-light
     border: 1px solid $color-grey-light
     border-bottom: none
     padding: $quarter-padding
@@ -251,7 +194,7 @@ input[type="color"]
         margin-left: $quarter-padding
 
       .btn
-        padding: $buttons-padding
+        padding: $button-padding
 
   textarea
     margin: 0
@@ -259,6 +202,7 @@ input[type="color"]
 .select
   background: white
   border: 1px solid $color-grey-light
+  border-bottom-width: 2px
   position: relative
 
   &:after
@@ -276,13 +220,11 @@ input[type="color"]
     box-shadow: none
     background-color: transparent
     background-image: none
-    -webkit-appearance: none
-    -moz-appearance: none
-    appearance: none
 
 .select-multiple
   background: white
   border: 1px solid $color-grey-light
+  border-top-width: 2px
   position: relative
   min-height: 28px
 
@@ -300,11 +242,11 @@ input[type="color"]
     padding: $quarter-padding 0 0 $quarter-padding
 
     .option
-      padding: $quarter-padding ($padding + $quarter-padding) $quarter-padding $quarter-padding
+      padding: ($quarter-padding * 1.25) $double-padding ($quarter-padding * 0.75) $quarter-padding
       display: inline-block
       position: relative
       float: left
-      background: $color-grey-very-light
+      background: $color-grey-super-light
       border: 1px solid $color-grey-light
       margin-right: $quarter-padding
       margin-bottom: $quarter-padding
