@@ -54,14 +54,14 @@ widgets('live-validation', '[required]', {
     field.classList.add('has-success')
 
     const label = field.querySelector('label')
-    label.insertBefore(getNode('<i class="icon-tick feedback-icon"></i>'), label.firstChild)
+    label.insertBefore(getNode('<i class="fa fa-check feedback-icon"></i>'), label.firstChild)
   },
   onError: (input, res) => {
     const field = parent(input, '.field')
     field.classList.add('has-error')
 
     const label = field.querySelector('label')
-    label.insertBefore(getNode('<i class="icon-cross feedback-icon"></i>'), label.firstChild)
+    label.insertBefore(getNode('<i class="fa fa-times feedback-icon"></i>'), label.firstChild)
     label.appendChild(getNode(`<div class='text-red'>${res}</div>`))
   },
   clean: (input) => {
