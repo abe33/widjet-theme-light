@@ -37,7 +37,7 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "standard": "^5.4.1",
     "widjet": "^1.0.2",
-    "widjet-select-multiple": "^1.0.0",
+    "widjet-select-multiple": "^1.0.1",
     "widjet-text-editor": "^1.0.0",
     "widjet-utils": "^0.3.4",
     "widjet-validation": "^1.0.2"
