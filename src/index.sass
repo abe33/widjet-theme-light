@@ -1,7 +1,11 @@
 @import mixins
 @import defaults
 
+*
+  box-sizing: border-box
+
 %flex-container
+  display: inline-table
   display: flex
   width: 100%
   height: 100%
@@ -15,6 +19,7 @@
   flex-direction: column
 
 .flex-grow
+  display: table-cell
   flex: 1 1 0
 
 input[type="color"]
