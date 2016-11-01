@@ -5,6 +5,16 @@ import 'widjet-validation'
 import 'widjet-select-multiple'
 import {Markdown} from 'widjet-text-editor'
 
+const checkboxCollectionPredicate = i =>
+  i.nodeName === 'INPUT' &&
+  i.type === 'checkbox' &&
+  i.parentNode.classList.contains('btn-group')
+
+const radioCollectionPredicate = i =>
+  i.nodeName === 'INPUT' &&
+  i.type === 'radio' &&
+  i.parentNode.classList.contains('btn-group')
+
 widgets('select-multiple', 'select[multiple]', {on: 'load'})
 widgets('text-editor', '.markdown-editor', {
   on: 'load',
@@ -14,6 +24,31 @@ widgets('text-editor', '.markdown-editor', {
 })
 widgets('live-validation', '[required]', {
   on: 'load',
+  resolvers: [
+    [
+      checkboxCollectionPredicate,
+      input => {
+        const container = input.parentNode
+        const checked = asArray(container.querySelectorAll('input:checked'))
+        return checked.map(i => i.value)
+      }
+    ], [
+      radioCollectionPredicate,
+      input => {
+        const checked = input.parentNode.querySelector('input:checked')
+        return checked ? checked.value : undefined
+      }
+    ]
+  ],
+  validators: [
+    [
+      checkboxCollectionPredicate,
+      (i18n, value) => value && value.length > 0 ? null : i18n('blank_value')
+    ], [
+      radioCollectionPredicate,
+      (i18n, value) => value ? null : i18n('blank_value')
+    ]
+  ],
   onSuccess: (input) => {
     const field = parent(input, '.field')
     field.classList.add('has-success')
