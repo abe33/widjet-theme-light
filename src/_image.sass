@@ -1,0 +1,72 @@
+.field.image
+  progress
+    width: 100%
+    display: none
+
+  input[type="file"]
+    opacity: 0
+    z-index: 3
+    margin: 0
+    height: 100%
+    width: 100%
+    cursor: pointer
+    +absolute(0,0,0,0)
+
+  .controls
+    background: white
+    border: 1px solid $color-grey-light
+    position: relative
+    height: auto
+    min-height: 100px
+
+    &:before
+      content: '\f030'
+      font-family: $font-icon
+      font-size: 4em
+      color: $color-grey-light
+      +absolute(50%, 50%)
+      +transform(translate(-50%, -50%))
+
+    label
+      display: block
+      +absolute(0,0,0,0)
+
+    .preview
+      min-height: 21px
+
+      img
+        position: relative
+        z-index: 2
+        margin: 0 auto
+        max-width: 220px
+        max-height: 220px
+        display: block
+
+  .meta
+    @extend .flex-row
+    margin-top: $quarter-padding
+
+    > *
+      @extend .flex-grow
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+      line-height: 1.4em
+
+      &.name:not(:empty):before
+        content: '\f1c5'
+        font-family: $font-icon
+        margin-right: $quarter-padding
+
+      &.size
+        text-align: right
+
+      &.dimensions
+        text-align: center
+
+  &.loading
+    input[type="file"], .controls label
+      display: none
+
+    progress
+      display: block

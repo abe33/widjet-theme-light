@@ -1,0 +1,26 @@
+.field.markdown
+  &.has-error .btn-group,
+  &.has-success .btn-group,
+    border-color: $color-grey-light
+    background: $color-grey-light
+
+.markdown-editor
+  .toolbar
+    @extend .flex-row
+    background: $color-grey-super-light
+    border: 1px solid $color-grey-light
+    border-bottom: none
+    padding: $quarter-padding
+
+    .btn-group
+      width: auto
+      height: auto
+
+      & + .btn-group
+        margin-left: $quarter-padding
+
+      .btn
+        padding: $button-padding
+
+  textarea
+    margin: 0

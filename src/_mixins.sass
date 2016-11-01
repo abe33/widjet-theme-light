@@ -1,8 +1,8 @@
-=webkit-only()
+=for-webkit
   @media screen and (-webkit-min-device-pixel-ratio:0)
     @content
 
-=gecko-only()
+=for-gecko()
   @-moz-document url-prefix()
     @content
 
@@ -76,7 +76,7 @@
   & .track
     @content
 
-  +webkit-only
+  +for-webkit
     &
       -webkit-appearance: none
       @content
@@ -90,4 +90,22 @@
 
 =outer-spin
   &::-webkit-outer-spin-button
+    @content
+
+=progress-bar()
+  +for-webkit
+    &::-webkit-progress-bar
+      @content
+
+  +for-gecko
+    @content
+
+=progress-value()
+  &::-webkit-progress-value
+    @content
+
+  &::-moz-progress-bar
+    @content
+
+  &::-ms-fill
     @content

@@ -3,6 +3,9 @@
 @import flex
 @import buttons
 @import inputs
+@import select
+@import markdown
+@import image
 
 html, body, input, textarea, select
   font-family: $font-interface
@@ -24,7 +27,7 @@ html, body, input, textarea, select
   margin-bottom: $padding
 
   &.has-success
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .controls
       border-color: $color-green
 
     .btn-group
@@ -33,8 +36,12 @@ html, body, input, textarea, select
     &.image .controls:before, .feedback-icon
       color: $color-green
 
+    progress
+      +progress-value
+        background-color: $color-green
+
   &.has-error
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .controls
       border-color: $color-red
 
     .btn-group
@@ -45,6 +52,10 @@ html, body, input, textarea, select
 
     &.boolean label:before
       border-color: $color-red
+
+    progress
+      +progress-value
+        background-color: $color-red
 
   &.has-success, &.has-error
     > label
@@ -90,178 +101,3 @@ html, body, input, textarea, select
     label + p
       margin-top: $quarter-padding
       margin-bottom: 0
-
-  &.image
-    progress
-      width: 100%
-      display: none
-
-    input[type="file"]
-      opacity: 0
-      z-index: 3
-      margin: 0
-      height: 100%
-      width: 100%
-      cursor: pointer
-      +absolute(0,0,0,0)
-
-    .controls
-      background: white
-      border: 1px solid $color-grey-light
-      position: relative
-      height: auto
-      min-height: 100px
-
-      &:before
-        content: '\f030'
-        font-family: $font-icon
-        font-size: 4em
-        color: $color-grey-light
-        +absolute(50%, 50%)
-        +transform(translate(-50%, -50%))
-
-      label
-        display: block
-        +absolute(0,0,0,0)
-
-      .preview
-        min-height: 21px
-
-        img
-          position: relative
-          z-index: 2
-          margin: 0 auto
-          max-width: 220px
-          max-height: 220px
-          display: block
-
-    .meta
-      @extend .flex-row
-      margin-top: $quarter-padding
-
-      > *
-        @extend .flex-grow
-        overflow: hidden
-        text-overflow: ellipsis
-        white-space: nowrap
-        width: 15%
-        flex-basis: 15%
-        line-height: 1.4em
-
-        &.name
-          width: 55%
-          flex-basis: 55%
-
-          &:not(:empty):before
-            content: '\f1c5'
-            font-family: $font-icon
-            margin-right: $quarter-padding
-
-        &.size
-          text-align: right
-
-        &.dimensions
-          text-align: center
-
-    &.has-error .controls
-      border-color: $color-red
-
-    &.has-success .controls
-      border-color: $color-green
-
-    &.loading
-      input[type="file"], .controls label
-        display: none
-
-  &.markdown
-    &.has-error .btn-group,
-    &.has-success .btn-group,
-      border-color: $color-grey-light
-
-.markdown-editor
-  .toolbar
-    @extend .flex-row
-    background: $color-grey-super-light
-    border: 1px solid $color-grey-light
-    border-bottom: none
-    padding: $quarter-padding
-
-    .btn-group
-      width: auto
-      height: auto
-
-      & + .btn-group
-        margin-left: $quarter-padding
-
-      .btn
-        padding: $button-padding
-
-  textarea
-    margin: 0
-
-.select
-  background: white
-  border: 1px solid $color-grey-light
-  border-bottom-width: 2px
-  position: relative
-
-  &:after
-    content: '\f078'
-    font-family: $font-icon
-    margin-top: -0.5em
-    +absolute(50%, initial, initial, 1em)
-
-  select
-    width: 100%
-    color: $color-grey
-    padding: $input-padding
-    cursor: pointer
-    border: none
-    box-shadow: none
-    background-color: transparent
-    background-image: none
-
-.select-multiple
-  background: white
-  border: 1px solid $color-grey-light
-  border-top-width: 2px
-  position: relative
-  min-height: 28px
-
-  select[multiple]
-    display: none
-
-  select:not([multiple])
-    opacity: 0
-    width: 100%
-    cursor: pointer
-    +absolute(0,0,0,0)
-
-  .values
-    overflow: hidden
-    padding: $quarter-padding 0 0 $quarter-padding
-
-    .option
-      padding: ($quarter-padding * 1.25) $double-padding ($quarter-padding * 0.75) $quarter-padding
-      display: inline-block
-      position: relative
-      float: left
-      background: $color-grey-super-light
-      border: 1px solid $color-grey-light
-      margin-right: $quarter-padding
-      margin-bottom: $quarter-padding
-
-      .label
-        font-weight: normal
-        margin: 0
-        font-size: 1em
-        line-height: 1em
-
-      button
-        background: $color-grey-light
-        color: $color-grey
-        border: none
-        padding: 0
-        cursor: pointer
-        +box(1.4em)
-        +absolute(0.35em, initial, initial, 0.35em)

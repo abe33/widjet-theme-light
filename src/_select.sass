@@ -1,0 +1,69 @@
+.select
+  background: white
+  border: 1px solid $color-grey-light
+  border-bottom-width: 2px
+  position: relative
+
+  &:after
+    content: '\f078'
+    font-family: $font-icon
+    margin-top: -0.5em
+    +absolute(50%, initial, initial, 1em)
+
+  select
+    width: 100%
+    color: $color-grey
+    padding: $input-padding
+    cursor: pointer
+    border: none
+    box-shadow: none
+    background-color: transparent
+    background-image: none
+
+.select-multiple
+  background: white
+  border: 1px solid $color-grey-light
+  border-top-width: 2px
+  position: relative
+  min-height: 28px
+
+  select[multiple]
+    display: none
+
+  select:not([multiple])
+    opacity: 0
+    width: 100%
+    cursor: pointer
+    +absolute(0,0,0,0)
+
+  .values
+    overflow: hidden
+    padding: $quarter-padding 0 0 $quarter-padding
+
+    .option
+      padding: ($quarter-padding * 1.25) $double-padding ($quarter-padding * 0.75) $quarter-padding
+      display: inline-block
+      position: relative
+      float: left
+      background: $color-grey-super-light
+      border: 1px solid $color-grey-light
+      margin-right: $quarter-padding
+      margin-bottom: $quarter-padding
+
+      .label
+        font-weight: normal
+        margin: 0
+        font-size: 1em
+        line-height: 1em
+
+      button
+        background: $color-grey-light
+        color: $color-grey
+        border: none
+        padding: 0
+        cursor: pointer
+        +box(1.4em)
+        +absolute(0.35em, initial, initial, 0.35em)
+
+        > *
+          pointer-events: none

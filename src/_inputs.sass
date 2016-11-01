@@ -83,3 +83,16 @@ input[type="checkbox"].boolean:checked + label
     background: $color-green
     border-color: lighten($color-dark-green, 20%)
     text-shadow: 0 0 4px $color-dark-green
+
+progress
+  margin-top: $half-padding
+  +appearance(none)
+
+  +progress-bar
+    background: $color-grey-super-light
+    border: 1px solid $color-grey-light
+    height: 6px
+    border-radius: 3px
+
+  +progress-value
+    background-color: $color-blue
