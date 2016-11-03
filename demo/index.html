@@ -121,19 +121,22 @@
         <p>Hint for input of type <code>image</code>.</p>
 
         <div class="controls">
-          <input value="" type="hidden" required>
-          <label for="image-1"></label>
-          <input id="image-1" data-size="680,340,widescreen" placeholder="http://..." data-name="image" class="local-file-upload-handled" type="file">
+          <div class="image-input">
+            <div class='image-container'>
+              <label><input id="image-1" data-size="680,340,widescreen" placeholder="http://..." data-name="image" class="local-file-upload-handled" type="file"></label>
 
-          <div class="preview"></div>
-        </div>
+              <div class="preview"></div>
+            </div>
 
-        <progress value="10" min="0" max="100">10%</progress>
-        <div class="meta">
-          <div class="name">path/to/file.jpg</div>
-          <div class="mime">application/jpeg</div>
-          <div class="dimensions">640x320</div>
-          <div class="size">55ko</div>
+            <progress value="10" min="0" max="100">10%</progress>
+
+            <div class="meta">
+              <div class="name">path/to/file.jpg</div>
+              <div class="mime">application/jpeg</div>
+              <div class="dimensions">640x320</div>
+              <div class="size">55ko</div>
+            </div>
+          </div>
         </div>
       </div>
 
