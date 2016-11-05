@@ -3447,7 +3447,7 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.1"
 
-widjet-disposables@*, widjet-disposables@^0.1.7:
+widjet-disposables, widjet-disposables@*, widjet-disposables@^0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/widjet-disposables/-/widjet-disposables-0.1.7.tgz#3eede093a972a0cfa8e74ee2a4fcc942297ddcc8"
   dependencies:
@@ -3457,8 +3457,8 @@ widjet-disposables@*, widjet-disposables@^0.1.7:
     babel-preset-es2015 "^6.3.13"
 
 widjet-file-upload@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/widjet-file-upload/-/widjet-file-upload-0.2.0.tgz#82032700c2b399974688780726172ad3839cbd69"
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/widjet-file-upload/-/widjet-file-upload-0.2.1.tgz#a1cd17e8ca8de58a7103833f10bd7158990f8be7"
   dependencies:
     babel-cli "^6.3.17"
     babel-preset-es2015 "^6.3.13"
@@ -3467,8 +3467,8 @@ widjet-file-upload@^0.2.0:
     widjet-utils "^0.3.0"
 
 widjet-select-multiple@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/widjet-select-multiple/-/widjet-select-multiple-1.0.1.tgz#16ebf8fcbd249f14c41292ce01da276f79af1e73"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/widjet-select-multiple/-/widjet-select-multiple-1.0.2.tgz#5f573912d6e3ad476fccd0143d8c3dccc45cb1eb"
   dependencies:
     babel-cli "^6.3.17"
     babel-preset-es2015 "^6.3.13"
