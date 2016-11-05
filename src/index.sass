@@ -57,13 +57,26 @@ html, body, input, textarea, select
       +progress-value
         background-color: $color-red
 
+  &.has-focus
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor, .image-container, &.boolean label:before
+      box-shadow: 0 0 0 2px white, 0 0 0 3px rgba($color-blue, 0.5),
+
+    &.markdown
+      .btn-group, textarea
+        box-shadow: none
+
+    .btn-group input[type="checkbox"]:focus + label:before
+      content: ''
+      border: 1px solid $color-blue
+      +absolute(0,0,0,0)
+
   &.has-success, &.has-error
     > label
       position: relative
       padding-left: 1.1em
 
       .feedback-icon
-        +absolute(-0.05em, 0)
+        +absolute(0.15em, 0)
 
       div
         display: inline-block
@@ -73,6 +86,10 @@ html, body, input, textarea, select
       padding-left: 0
       .feedback-icon
         display: none
+
+    &.markdown .btn-group
+      border-color: $color-grey-light
+      background: $color-grey-light
 
   p
     font-size: 0.9em
