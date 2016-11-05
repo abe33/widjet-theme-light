@@ -1,10 +1,22 @@
 import widgets from 'widjet'
+import {CompositeDisposable, DisposableEvent} from 'widjet-disposables'
 import {parent, getNode, asArray, detachNode} from 'widjet-utils'
 
 import 'widjet-validation'
 import 'widjet-select-multiple'
 import {getTextPreview} from 'widjet-file-upload'
 import {Markdown} from 'widjet-text-editor'
+
+widgets.define('propagate-focus', (options) => (el) =>
+  new CompositeDisposable([
+    new DisposableEvent(el, 'focus', () =>
+      parent(el, '.field').classList.add('has-focus')
+    ),
+    new DisposableEvent(el, 'blur', () =>
+      parent(el, '.field').classList.remove('has-focus')
+    )
+  ])
+)
 
 const checkboxCollectionPredicate = i =>
   i.nodeName === 'INPUT' &&
@@ -82,3 +94,4 @@ widgets('live-validation', '[required]', {
     asArray(feedbackNodes).forEach((node) => detachNode(node))
   }
 })
+widgets('propagate-focus', 'input, select, textarea', {on: 'load'})
