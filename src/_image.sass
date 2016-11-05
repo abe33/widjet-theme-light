@@ -1,4 +1,4 @@
-.field.image
+.image-input
   progress
     width: 100%
     display: none
@@ -19,20 +19,30 @@
     height: auto
     min-height: 100px
 
-    &:before
-      content: '\f030'
-      font-family: $font-icon
-      font-size: 4em
-      color: $color-grey-light
-      +absolute(50%, 50%)
-      +transform(translate(-50%, -50%))
+    button
+      z-index: 3
+      @extend .btn
+      +absolute(4px,initial,initial,4px)
+
+      span
+        display: none
+
+      &:before
+        content: '\f00d'
+        font-family: $font-icon
 
     label
       display: block
       +absolute(0,0,0,0)
 
     .preview
-      min-height: 21px
+      min-height: 100px
+      max-height: 220px
+      overflow: hidden
+      position: relative
+
+      pre
+        font-size: 0.6em
 
       img
         position: relative
@@ -42,16 +52,28 @@
         max-height: 220px
         display: block
 
+      &:empty
+        &:before
+          content: '\f030'
+          font-family: $font-icon
+          font-size: 4em
+          color: $color-grey-light
+          +absolute(50%, 50%)
+          +transform(translate(-50%, -50%))
+
+        + button
+          display: none
+
   .meta
     @extend .flex-row
     margin-top: $quarter-padding
 
     > *
-      @extend .flex-grow
       overflow: hidden
-      text-overflow: ellipsis
       white-space: nowrap
       line-height: 1.4em
+      text-overflow: ellipsis
+      +flex(1 1 auto)
 
       &.name:not(:empty):before
         content: '\f1c5'
@@ -65,7 +87,7 @@
         text-align: center
 
   &.loading
-    input[type="file"], .controls label
+    input[type="file"], label
       display: none
 
     progress

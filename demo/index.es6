@@ -3,6 +3,7 @@ import {parent, getNode, asArray, detachNode} from 'widjet-utils'
 
 import 'widjet-validation'
 import 'widjet-select-multiple'
+import {getTextPreview} from 'widjet-file-upload'
 import {Markdown} from 'widjet-text-editor'
 
 const checkboxCollectionPredicate = i =>
@@ -16,6 +17,10 @@ const radioCollectionPredicate = i =>
   i.parentNode.classList.contains('btn-group')
 
 widgets('select-multiple', 'select[multiple]', {on: 'load'})
+widgets('file-upload', 'input[type="file"]', {
+  on: 'load',
+  previewers: [[o => o.file.type === 'text/plain', getTextPreview]]
+})
 widgets('text-editor', '.markdown-editor', {
   on: 'load',
   blockquote: Markdown.blockquote,

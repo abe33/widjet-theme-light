@@ -27,13 +27,13 @@ html, body, input, textarea, select
   margin-bottom: $padding
 
   &.has-success
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .controls
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .image-container
       border-color: $color-green
 
     .btn-group
       background: $color-green
 
-    &.image .controls:before, .feedback-icon
+    &.image .preview:before, .feedback-icon
       color: $color-green
 
     progress
@@ -41,13 +41,13 @@ html, body, input, textarea, select
         background-color: $color-green
 
   &.has-error
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .controls
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .image-container
       border-color: $color-red
 
     .btn-group
       background: $color-red
 
-    &.image .controls:before, .feedback-icon
+    &.image .preview:before, .feedback-icon
       color: $color-red
 
     &.boolean label:before

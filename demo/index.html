@@ -116,27 +116,12 @@
         <input id="range-1" min="0" max="100" step="1" value="10" placeholder="20" data-name="range" type="range" required>
       </div>
 
-      <div class="field image loading">
+      <div class="field image">
         <label for="image-1">Image<em> - Recommended size = 680x340</em></label>
         <p>Hint for input of type <code>image</code>.</p>
 
         <div class="controls">
-          <div class="image-input">
-            <div class='image-container'>
-              <label><input id="image-1" data-size="680,340,widescreen" placeholder="http://..." data-name="image" class="local-file-upload-handled" type="file"></label>
-
-              <div class="preview"></div>
-            </div>
-
-            <progress value="10" min="0" max="100">10%</progress>
-
-            <div class="meta">
-              <div class="name">path/to/file.jpg</div>
-              <div class="mime">application/jpeg</div>
-              <div class="dimensions">640x320</div>
-              <div class="size">55ko</div>
-            </div>
-          </div>
+          <input id="image-1" data-name="image" type="file" required>
         </div>
       </div>
 
