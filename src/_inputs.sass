@@ -1,7 +1,8 @@
 *:focus
   outline: none
 
-*::-moz-focus-inner
+*::-moz-focus-inner,
+*::-moz-focus-outer
   border: 0
 
 input, textarea, select
@@ -11,14 +12,15 @@ input, textarea, select
   +appearance(none)
 
   +placeholder
-    color: $color-grey
+    color: $input-placeholder-color
 
 input, textarea
-  background: white
-  border: 1px solid $color-grey-light
-  border-top-width: 2px
-  line-height: 1em
+  @extend %inset
+  background: $input-background-color
+  border-color: $input-border-color
+  color: $input-text-color
   padding: $input-padding
+  line-height: 1em
   width: 100%
 
 input[type="checkbox"], input[type="radio"]
@@ -38,17 +40,18 @@ input[type="range"]
   background: transparent
 
   +range-track
-    background: $color-grey-light
-    border: none
-
-    +box(100%, 1px)
+    background: $input-background-color
+    border-color: $input-border-color
+    border-radius: 3px
+    +inset
+    +box(100%, 2px)
 
   +range-thumb
-    border: 1px solid $color-grey-light
-    background: $color-grey-super-light
+    background: $input-background-color
+    border-color: $input-border-color
     border-radius: 50%
     cursor: grab
-
+    +outset
     +box(1em)
 
     &:active
@@ -67,14 +70,14 @@ input[type="checkbox"].boolean + label
   margin-top: $quarter-padding
 
   &:before
+    @extend %inset
     overflow: hidden
-    background: white
+    background: $input-background-color
+    border-color: $input-border-color
+    color: white
     vertical-align: middle
     margin-right: $half-padding
     text-indent: -2em
-    color: white
-    border: 1px solid $color-grey-light
-    border-top-width: 2px
     font-size: 0.8em
     line-height: 1.4em
     margin-top: -0.2em

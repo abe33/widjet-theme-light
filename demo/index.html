@@ -116,12 +116,24 @@
         <input id="range-1" min="0" max="100" step="1" value="10" placeholder="20" data-name="range" type="range" required>
       </div>
 
-      <div class="field image">
-        <label for="image-1">Image<em> - Recommended size = 680x340</em></label>
-        <p>Hint for input of type <code>image</code>.</p>
+      <div class="field file">
+        <label for="file-1">Image<em> - Recommended size = 680x340</em></label>
+        <p>Hint for input of type <code>file</code>.</p>
 
         <div class="controls">
-          <input id="image-1" data-name="image" type="file" required>
+          <input id="file-1" data-name="file" type="file" data-versions='{"square": [200, 200], "golden": [650, 420], "wide": [1200, 600]}' required>
+        </div>
+      </div>
+
+      <div class="version-editor">
+        <div class="version-preview">
+          <img src="https://source.unsplash.com/random/600x400">
+          <div class="version-box" style="left: 100px; top: 20px; width: 300px; height: 200px;">
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" tabindex="-1"><span>Cancel</span></button>
+          <button type="button" tabindex="-1"><span>Save</span></button>
         </div>
       </div>
 

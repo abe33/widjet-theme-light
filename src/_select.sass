@@ -1,8 +1,11 @@
 .select
-  background: white
-  border: 1px solid $color-grey-light
-  border-bottom-width: 2px
+  @extend %outset
+  background: $button-background-color
+  border-color: $button-border-color
   position: relative
+
+  &:active
+    +outset-hover
 
   &:after
     content: '\f078'
@@ -12,7 +15,7 @@
 
   select
     width: 100%
-    color: $color-grey
+    color: $button-text-color
     padding: $input-padding
     cursor: pointer
     border: none
@@ -20,10 +23,14 @@
     background-color: transparent
     background-image: none
 
+    +for-gecko
+      color: transparent
+      text-shadow: 0 0 0 $button-text-color
+
 .select-multiple
-  background: white
-  border: 1px solid $color-grey-light
-  border-top-width: 2px
+  @extend %inset
+  background: $input-background-color
+  border-color: $input-border-color
   position: relative
   min-height: 28px
 
@@ -45,8 +52,8 @@
       display: inline-block
       position: relative
       float: left
-      background: $color-grey-super-light
-      border: 1px solid $color-grey-light
+      background: $input-background-alternate-color
+      border: 1px solid $input-border-color
       margin-right: $quarter-padding
       margin-bottom: $quarter-padding
 
@@ -57,8 +64,8 @@
         line-height: 1em
 
       button
-        background: $color-grey-light
-        color: $color-grey
+        background: $button-border-color
+        color: $button-text-color
         border: none
         padding: 0
         cursor: pointer

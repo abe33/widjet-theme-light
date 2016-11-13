@@ -1,31 +1,34 @@
 .btn
+  @extend %outset
   font-size: 1em
   line-height: 1em
   text-align: center
   text-transform: uppercase
-  color: $color-grey
-  background: white
-  border: 1px solid $color-grey-light
-  border-bottom-width: 2px
+  color: $button-text-color
+  background: $button-background-color
+  border-color: $button-border-color
   padding: $button-padding
   position: relative
 
   &:hover
-    background: $color-grey-super-light
+    background: $button-background-hover-color
 
   &:active
-    background: $color-grey-super-light
-    border-bottom-width: 1px
-    margin-top: 1px
+    background: $button-background-hover-color
+    +outset-hover
+
+  &:focus
+    box-shadow: 0 0 0 2px white, 0 0 0 3px rgba($color-blue, 0.5)
 
 label.btn
   padding: $label-button-padding
 
 .btn-group
+  @extend %outset
   @extend .flex-row
-  background: $color-grey-light
-  border: 1px solid $color-grey-light
-  border-bottom-width: 2px
+  background: $button-border-color
+  border-color: $button-border-color
+
 
   .btn
     @extend .flex-grow
@@ -34,7 +37,7 @@ label.btn
     border: none
 
     & + input + .btn, & + .btn
-      border-left: 1px solid $color-grey-light
+      border-left: 1px solid $button-border-color
 
     &:active
       margin-bottom: -1px

@@ -1,11 +1,12 @@
 @import mixins
+@import classes
 @import defaults
 @import flex
 @import buttons
 @import inputs
 @import select
 @import markdown
-@import image
+@import file
 
 html, body, input, textarea, select
   font-family: $font-interface
@@ -18,22 +19,22 @@ html, body, input, textarea, select
 
 .form-actions
   font-size: 0.85em
-  padding: $half-padding
+  padding: $half-padding 0
 
 .field
   position: relative
   font-size: 0.85em
-  padding: $half-padding
+  padding: $half-padding 0
   margin-bottom: $padding
 
   &.has-success
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .image-container
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.file .file-container
       border-color: $color-green
 
     .btn-group
       background: $color-green
 
-    &.image .preview:before, .feedback-icon
+    &.file .preview:before, .feedback-icon
       color: $color-green
 
     progress
@@ -41,13 +42,13 @@ html, body, input, textarea, select
         background-color: $color-green
 
   &.has-error
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.image .image-container
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor .toolbar, &.file .file-container
       border-color: $color-red
 
     .btn-group
       background: $color-red
 
-    &.image .preview:before, .feedback-icon
+    &.file .preview:before, .feedback-icon
       color: $color-red
 
     &.boolean label:before
@@ -58,14 +59,15 @@ html, body, input, textarea, select
         background-color: $color-red
 
   &.has-focus
-    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor, .image-container, &.boolean label:before
-      box-shadow: 0 0 0 2px white, 0 0 0 3px rgba($color-blue, 0.5),
+    input, textarea, .select, .btn-group, .select-multiple, .markdown-editor, .file-container, &.boolean label:before
+      box-shadow: 0 0 0 2px white, 0 0 0 3px rgba($color-blue, 0.5)
 
     &.markdown
       .btn-group, textarea
         box-shadow: none
 
-    .btn-group input[type="checkbox"]:focus + label:before
+    .btn-group input[type="checkbox"]:focus + label:before,
+    .btn-group input[type="radio"]:focus + label:before,
       content: ''
       border: 1px solid $color-blue
       +absolute(0,0,0,0)
