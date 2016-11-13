@@ -33,7 +33,7 @@ widgets('file-preview', 'input[type="file"]', {
   on: 'load',
   previewers: [[o => o.file.type === 'text/plain', getTextPreview]]
 })
-widgets('versions-editor', 'input[type="file"][data-versions]', {on: 'load'})
+widgets('file-versions', 'input[type="file"][data-versions]', {on: 'load'})
 widgets('text-editor', '.markdown-editor', {
   on: 'load',
   blockquote: Markdown.blockquote,

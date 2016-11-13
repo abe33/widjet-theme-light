@@ -138,6 +138,7 @@
     img
       display: block
       max-width: 100%
+      cursor: crosshair
 
     .version-box
       position: absolute
@@ -146,15 +147,55 @@
 
       &:before
         content: ''
+        pointer-events: none
         border-top: 1px dotted $color-grey
         border-bottom: 1px dotted $color-grey
         +absolute(33%, 0, 33%, 0)
 
       &:after
         content: ''
+        pointer-events: none
         border-left: 1px dotted $color-grey
         border-right: 1px dotted $color-grey
         +absolute(0, 33%, 0, 33%)
+
+      .drag-box
+        cursor: grab
+        +absolute(0,0,0,0)
+
+        &:active
+          cursor: grabbing
+
+      .top-left-handle,
+      .top-right-handle,
+      .bottom-right-handle,
+      .bottom-left-handle
+        background: $color-blue
+        +box(4px)
+        +absolute
+
+        &:before
+          content: ''
+          +box(12px)
+          +absolute(-4px, -4px)
+
+      .top-left-handle, .top-right-handle
+        top: -2px
+
+      .bottom-left-handle, .bottom-right-handle
+        bottom: -2px
+
+      .top-left-handle, .bottom-left-handle
+        left: -2px
+
+      .top-right-handle, .bottom-right-handle
+        right: -2px
+
+      .top-left-handle, .bottom-right-handle
+        cursor: nwse-resize
+
+      .top-right-handle, .bottom-left-handle
+        cursor: nesw-resize
 
   .actions
     @extend .btn-group
