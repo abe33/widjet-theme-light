@@ -131,13 +131,19 @@
   border: 1px solid $input-border-color
   box-shadow: 0 2px 4px 2px rgba(0,0,0,0.1)
   padding: $half-padding
+  text-align: center
+  max-width: 80vh
+  z-index: 10
+  +fixed(0, 0)
 
   .version-preview
     position: relative
     overflow: hidden
+    display: inline-block
     img
       display: block
       max-width: 100%
+      max-height: 60vh
       cursor: crosshair
 
     .version-box
