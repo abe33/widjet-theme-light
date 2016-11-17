@@ -121,7 +121,19 @@
         <p>Hint for input of type <code>file</code>.</p>
 
         <div class="controls">
-          <input id="file-1" data-name="file" type="file" data-versions='{"square": [200, 200], "golden": [650, 420], "wide": [1200, 600]}' required>
+          <input type="hidden"
+                 data-name="file-versions[square]"
+                 data-size="[400, 400]"
+                 data-version-name="square">
+          <input type="hidden"
+                 data-name="file-versions[golden]"
+                 data-size="[650, 420]"
+                 data-version-name="golden">
+          <input type="hidden"
+                 data-name="file-versions[wide]"
+                 data-size="[600, 300]"
+                 data-version-name="wide">
+          <input id="file-1" data-name="file" type="file" required>
         </div>
       </div>
 

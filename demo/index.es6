@@ -1,6 +1,6 @@
 import widgets from 'widjet'
 import {CompositeDisposable, DisposableEvent} from 'widjet-disposables'
-import {parent, getNode, asArray, detachNode} from 'widjet-utils'
+import {parent, getNode, asArray, asPair, detachNode} from 'widjet-utils'
 
 import 'widjet-validation'
 import 'widjet-select-multiple'
@@ -28,12 +28,40 @@ const radioCollectionPredicate = i =>
   i.type === 'radio' &&
   i.parentNode.classList.contains('btn-group')
 
+const versionSiblings = (el) =>
+  asArray(parent(el, '.controls').querySelectorAll('input[data-size]'))
+
+const jsonReducer = (attr) => (m, i) => {
+  m[i.getAttribute('data-version-name')] = JSON.parse(i.getAttribute(attr))
+  return m
+}
+
+const versionsProvider = (el) =>
+  versionSiblings(el).reduce(jsonReducer('data-size'), {})
+
+const versionBoxesProvider = (el) =>
+  versionSiblings(el).reduce(jsonReducer('value'), {})
+
+const onVersionsChange = (el, versions) => {
+  const container = parent(el, '.controls')
+  asPair(versions).forEach(([name, box]) => {
+    if (box) {
+      container.querySelector(`input[data-version-name="${name}"]`).value = JSON.stringify(box)
+    }
+  })
+}
+
 widgets('select-multiple', 'select[multiple]', {on: 'load'})
 widgets('file-preview', 'input[type="file"]', {
   on: 'load',
   previewers: [[o => o.file.type === 'text/plain', getTextPreview]]
 })
-widgets('file-versions', 'input[type="file"][data-versions]', {on: 'load'})
+widgets('file-versions', 'input[type="file"]', {
+  on: 'load',
+  versionsProvider,
+  versionBoxesProvider,
+  onVersionsChange
+})
 widgets('text-editor', '.markdown-editor', {
   on: 'load',
   blockquote: Markdown.blockquote,
