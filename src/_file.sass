@@ -53,6 +53,11 @@
         max-height: 220px
         display: block
 
+      iframe
+        width: 100%
+        height: 220px
+        border: none
+
       &:empty
         &:before
           content: '\f030'
@@ -173,6 +178,10 @@
         &:active
           cursor: grabbing
 
+      .top-handle,
+      .left-handle,
+      .bottom-handle,
+      .right-handle,
       .top-left-handle,
       .top-right-handle,
       .bottom-right-handle,
@@ -186,17 +195,27 @@
           +box(12px)
           +absolute(-4px, -4px)
 
-      .top-left-handle, .top-right-handle
+      .top-left-handle, .top-right-handle, .top-handle
         top: -2px
 
-      .bottom-left-handle, .bottom-right-handle
+      .bottom-left-handle, .bottom-right-handle, .bottom-handle
         bottom: -2px
 
-      .top-left-handle, .bottom-left-handle
+      .top-left-handle, .bottom-left-handle, .left-handle
         left: -2px
 
-      .top-right-handle, .bottom-right-handle
+      .top-right-handle, .bottom-right-handle, .right-handle
         right: -2px
+
+      .top-handle, .bottom-handle
+        cursor: ns-resize
+        left: 50%
+        margin-left: -2px
+
+      .left-handle, .right-handle
+        cursor: ew-resize
+        top: 50%
+        margin-top: -2px
 
       .top-left-handle, .bottom-right-handle
         cursor: nwse-resize

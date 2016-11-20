@@ -4,7 +4,7 @@ import {parent, getNode, asArray, asPair, detachNode} from 'widjet-utils'
 
 import 'widjet-validation'
 import 'widjet-select-multiple'
-import {getTextPreview} from 'widjet-file-upload'
+import {getTextPreview, getPDFPreview} from 'widjet-file-upload'
 import {Markdown} from 'widjet-text-editor'
 
 widgets.define('propagate-focus', (options) => (el) =>
@@ -54,7 +54,10 @@ const onVersionsChange = (el, versions) => {
 widgets('select-multiple', 'select[multiple]', {on: 'load'})
 widgets('file-preview', 'input[type="file"]', {
   on: 'load',
-  previewers: [[o => o.file.type === 'text/plain', getTextPreview]]
+  previewers: [
+    [o => o.file.type === 'text/plain', getTextPreview],
+    [o => o.file.type === 'application/pdf', getPDFPreview]
+  ]
 })
 widgets('file-versions', 'input[type="file"]', {
   on: 'load',
