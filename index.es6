@@ -1146,6 +1146,16 @@ function getTextPreview ({file, onprogress}) {
   })
 }
 
+function getPDFPreview ({file, onprogress}) {
+  return new Promise((resolve, reject) => {
+    const reader = new window.FileReader();
+    reader.onload = (e) => resolve(getNode(`<iframe src="${e.target.result}"></iframe>`));
+    reader.onerror = reject;
+    reader.onprogress = onprogress;
+    reader.readAsDataURL(file);
+  })
+}
+
 widgets.define('file-preview', (options) => {
   const {
     wrap, previewSelector, nameMetaSelector, mimeMetaSelector, dimensionsMetaSelector, sizeMetaSelector, progressSelector, resetButtonSelector, formatSize, formatDimensions
@@ -1419,6 +1429,10 @@ class VersionEditor {
         <div class="version-preview">
           <div class="version-box">
             <div class="drag-box"></div>
+            <div class="top-handle"></div>
+            <div class="left-handle"></div>
+            <div class="bottom-handle"></div>
+            <div class="right-handle"></div>
             <div class="top-left-handle"></div>
             <div class="top-right-handle"></div>
             <div class="bottom-left-handle"></div>
@@ -1502,6 +1516,102 @@ class VersionEditor {
 
       this.box.style.left = px(clamp(mouseX, 0, b.width - hb.width));
       this.box.style.top = px(clamp(mouseY, 0, b.height - hb.height));
+    });
+
+    this.dragGesture('.top-handle', (data) => {
+      const {
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseY
+      } = data;
+
+      const y = mouseY + (hb.height / 2);
+      const ratio = this.version.getRatio();
+      const center = bb.left + bb.width / 2;
+      let newHeight = bb.bottom - y;
+      let newWidth = newHeight / ratio;[newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight
+      ], [
+        Math.min(center * 2, (b.width - center) * 2),
+        bb.bottom
+      ]);
+
+      this.updateBox(
+        center - newWidth / 2,
+        clamp(bb.bottom - newHeight, 0, b.height),
+        newWidth,
+        newHeight
+      );
+    });
+
+    this.dragGesture('.bottom-handle', (data) => {
+      const {
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseY
+      } = data;
+
+      const y = mouseY + (hb.height / 2);
+      const ratio = this.version.getRatio();
+      const center = bb.left + bb.width / 2;
+      let newHeight = y - bb.top;
+      let newWidth = newHeight / ratio;[newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight
+      ], [
+        Math.min(center * 2, (b.width - center) * 2),
+        b.height - bb.top
+      ]);
+
+      this.updateBox(
+        center - newWidth / 2,
+        bb.top,
+        newWidth,
+        newHeight
+      );
+    });
+
+    this.dragGesture('.left-handle', (data) => {
+      const {
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+      } = data;
+
+      const x = mouseX + (hb.width / 2);
+      const ratio = this.version.getRatio();
+      const center = bb.top + bb.height / 2;
+      let newWidth = bb.right - x;
+      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight
+      ], [
+        bb.right,
+        Math.min(center * 2, (b.height - center) * 2)
+      ]);
+
+      this.updateBox(
+        clamp(bb.right - newWidth, 0, b.width),
+        center - newHeight / 2,
+        newWidth,
+        newHeight
+      );
+    });
+
+    this.dragGesture('.right-handle', (data) => {
+      const {
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+      } = data;
+
+      const x = mouseX + (hb.width / 2);
+      const ratio = this.version.getRatio();
+      const center = bb.top + bb.height / 2;
+      let newWidth = x - bb.left;
+      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight
+      ], [
+        b.height - bb.top,
+        Math.min(center * 2, (b.height - center) * 2)
+      ]);
+
+      this.updateBox(
+        bb.left,
+        center - newHeight / 2,
+        newWidth,
+        newHeight
+      );
     });
 
     this.dragGesture('.top-left-handle', (data) => {
@@ -2103,7 +2213,10 @@ const onVersionsChange = (el, versions) => {
 widgets('select-multiple', 'select[multiple]', {on: 'load'});
 widgets('file-preview', 'input[type="file"]', {
   on: 'load',
-  previewers: [[o => o.file.type === 'text/plain', getTextPreview]]
+  previewers: [
+    [o => o.file.type === 'text/plain', getTextPreview],
+    [o => o.file.type === 'application/pdf', getPDFPreview]
+  ]
 });
 widgets('file-versions', 'input[type="file"]', {
   on: 'load',

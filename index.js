@@ -1422,6 +1422,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
   }
 
+  function getPDFPreview(_ref5) {
+    var file = _ref5.file,
+        onprogress = _ref5.onprogress;
+
+    return new Promise(function (resolve, reject) {
+      var reader = new window.FileReader();
+      reader.onload = function (e) {
+        return resolve(getNode('<iframe src="' + e.target.result + '"></iframe>'));
+      };
+      reader.onerror = reject;
+      reader.onprogress = onprogress;
+      reader.readAsDataURL(file);
+    });
+  }
+
   widgets.define('file-preview', function (options) {
     var _merge = merge(defaults, options),
         wrap = _merge.wrap,
@@ -1558,11 +1573,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return Math.floor(n * 100) / 100;
   };
 
-  var formatSize = when(unitPerSize.map(function (_ref5) {
-    var _ref6 = _slicedToArray(_ref5, 3),
-        limit = _ref6[0],
-        unit = _ref6[1],
-        divider = _ref6[2];
+  var formatSize = when(unitPerSize.map(function (_ref6) {
+    var _ref7 = _slicedToArray(_ref6, 3),
+        limit = _ref7[0],
+        unit = _ref7[1],
+        divider = _ref7[2];
 
     return [function (n) {
       return n < limit / 2;
@@ -1592,10 +1607,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
   };
 
-  var ratio = function ratio(_ref7) {
-    var _ref8 = _slicedToArray(_ref7, 2),
-        w = _ref8[0],
-        h = _ref8[1];
+  var ratio = function ratio(_ref8) {
+    var _ref9 = _slicedToArray(_ref8, 2),
+        w = _ref9[0],
+        h = _ref9[1];
 
     return w / h;
   };
@@ -1725,7 +1740,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function VersionEditor(source, version) {
       _classCallCheck(this, VersionEditor);
 
-      var node = getNode('\n      <div class="version-editor">\n        <div class="version-preview">\n          <div class="version-box">\n            <div class="drag-box"></div>\n            <div class="top-left-handle"></div>\n            <div class="top-right-handle"></div>\n            <div class="bottom-left-handle"></div>\n            <div class="bottom-right-handle"></div>\n          </div>\n        </div>\n        <div class="actions">\n          <button type="button" class="cancel"><span>Cancel</span></button>\n          <button type="button" class="save"><span>Save</span></button>\n        </div>\n      </div>\n      ');
+      var node = getNode('\n      <div class="version-editor">\n        <div class="version-preview">\n          <div class="version-box">\n            <div class="drag-box"></div>\n            <div class="top-handle"></div>\n            <div class="left-handle"></div>\n            <div class="bottom-handle"></div>\n            <div class="right-handle"></div>\n            <div class="top-left-handle"></div>\n            <div class="top-right-handle"></div>\n            <div class="bottom-left-handle"></div>\n            <div class="bottom-right-handle"></div>\n          </div>\n        </div>\n        <div class="actions">\n          <button type="button" class="cancel"><span>Cancel</span></button>\n          <button type="button" class="save"><span>Save</span></button>\n        </div>\n      </div>\n      ');
 
       var box = node.querySelector('.version-box');
       var container = node.querySelector('.version-preview');
@@ -1799,6 +1814,98 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _this5.box.style.top = px(clamp(mouseY, 0, b.height - hb.height));
         });
 
+        this.dragGesture('.top-handle', function (data) {
+          var b = data.containerBounds,
+              hb = data.handleBounds,
+              bb = data.boxBounds,
+              mouseY = data.mouseY;
+
+
+          var y = mouseY + hb.height / 2;
+          var ratio = _this5.version.getRatio();
+          var center = bb.left + bb.width / 2;
+          var newHeight = bb.bottom - y;
+          var newWidth = newHeight / ratio;
+          var _contraintBoxSize = _this5.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), bb.bottom]);
+
+          var _contraintBoxSize2 = _slicedToArray(_contraintBoxSize, 2);
+
+          newWidth = _contraintBoxSize2[0];
+          newHeight = _contraintBoxSize2[1];
+
+
+          _this5.updateBox(center - newWidth / 2, clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
+        });
+
+        this.dragGesture('.bottom-handle', function (data) {
+          var b = data.containerBounds,
+              hb = data.handleBounds,
+              bb = data.boxBounds,
+              mouseY = data.mouseY;
+
+
+          var y = mouseY + hb.height / 2;
+          var ratio = _this5.version.getRatio();
+          var center = bb.left + bb.width / 2;
+          var newHeight = y - bb.top;
+          var newWidth = newHeight / ratio;
+          var _contraintBoxSize3 = _this5.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), b.height - bb.top]);
+
+          var _contraintBoxSize4 = _slicedToArray(_contraintBoxSize3, 2);
+
+          newWidth = _contraintBoxSize4[0];
+          newHeight = _contraintBoxSize4[1];
+
+
+          _this5.updateBox(center - newWidth / 2, bb.top, newWidth, newHeight);
+        });
+
+        this.dragGesture('.left-handle', function (data) {
+          var b = data.containerBounds,
+              hb = data.handleBounds,
+              bb = data.boxBounds,
+              mouseX = data.mouseX;
+
+
+          var x = mouseX + hb.width / 2;
+          var ratio = _this5.version.getRatio();
+          var center = bb.top + bb.height / 2;
+          var newWidth = bb.right - x;
+          var newHeight = newWidth / ratio;
+          var _contraintBoxSize5 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, Math.min(center * 2, (b.height - center) * 2)]);
+
+          var _contraintBoxSize6 = _slicedToArray(_contraintBoxSize5, 2);
+
+          newWidth = _contraintBoxSize6[0];
+          newHeight = _contraintBoxSize6[1];
+
+
+          _this5.updateBox(clamp(bb.right - newWidth, 0, b.width), center - newHeight / 2, newWidth, newHeight);
+        });
+
+        this.dragGesture('.right-handle', function (data) {
+          var b = data.containerBounds,
+              hb = data.handleBounds,
+              bb = data.boxBounds,
+              mouseX = data.mouseX;
+
+
+          var x = mouseX + hb.width / 2;
+          var ratio = _this5.version.getRatio();
+          var center = bb.top + bb.height / 2;
+          var newWidth = x - bb.left;
+          var newHeight = newWidth / ratio;
+          var _contraintBoxSize7 = _this5.contraintBoxSize([newWidth, newHeight], [b.height - bb.top, Math.min(center * 2, (b.height - center) * 2)]);
+
+          var _contraintBoxSize8 = _slicedToArray(_contraintBoxSize7, 2);
+
+          newWidth = _contraintBoxSize8[0];
+          newHeight = _contraintBoxSize8[1];
+
+
+          _this5.updateBox(bb.left, center - newHeight / 2, newWidth, newHeight);
+        });
+
         this.dragGesture('.top-left-handle', function (data) {
           var b = data.containerBounds,
               hb = data.handleBounds,
@@ -1810,12 +1917,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var ratio = _this5.version.getRatio();
           var newWidth = bb.right - x;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, bb.bottom]);
+          var _contraintBoxSize9 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, bb.bottom]);
 
-          var _contraintBoxSize2 = _slicedToArray(_contraintBoxSize, 2);
+          var _contraintBoxSize10 = _slicedToArray(_contraintBoxSize9, 2);
 
-          newWidth = _contraintBoxSize2[0];
-          newHeight = _contraintBoxSize2[1];
+          newWidth = _contraintBoxSize10[0];
+          newHeight = _contraintBoxSize10[1];
 
 
           _this5.updateBox(clamp(bb.right - newWidth, 0, b.width), clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
@@ -1832,12 +1939,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var ratio = _this5.version.getRatio();
           var newWidth = x - bb.left;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize3 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.bottom]);
+          var _contraintBoxSize11 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.bottom]);
 
-          var _contraintBoxSize4 = _slicedToArray(_contraintBoxSize3, 2);
+          var _contraintBoxSize12 = _slicedToArray(_contraintBoxSize11, 2);
 
-          newWidth = _contraintBoxSize4[0];
-          newHeight = _contraintBoxSize4[1];
+          newWidth = _contraintBoxSize12[0];
+          newHeight = _contraintBoxSize12[1];
 
 
           _this5.updateBox(bb.left, clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
@@ -1854,12 +1961,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var ratio = _this5.version.getRatio();
           var newWidth = bb.right - x;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize5 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, b.height - bb.top]);
+          var _contraintBoxSize13 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, b.height - bb.top]);
 
-          var _contraintBoxSize6 = _slicedToArray(_contraintBoxSize5, 2);
+          var _contraintBoxSize14 = _slicedToArray(_contraintBoxSize13, 2);
 
-          newWidth = _contraintBoxSize6[0];
-          newHeight = _contraintBoxSize6[1];
+          newWidth = _contraintBoxSize14[0];
+          newHeight = _contraintBoxSize14[1];
 
 
           _this5.updateBox(clamp(bb.right - newWidth, 0, b.width), bb.top, newWidth, newHeight);
@@ -1876,12 +1983,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var ratio = _this5.version.getRatio();
           var newWidth = x - bb.left;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize7 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.height - bb.top]);
+          var _contraintBoxSize15 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.height - bb.top]);
 
-          var _contraintBoxSize8 = _slicedToArray(_contraintBoxSize7, 2);
+          var _contraintBoxSize16 = _slicedToArray(_contraintBoxSize15, 2);
 
-          newWidth = _contraintBoxSize8[0];
-          newHeight = _contraintBoxSize8[1];
+          newWidth = _contraintBoxSize16[0];
+          newHeight = _contraintBoxSize16[1];
 
 
           _this5.updateBox(bb.left, bb.top, newWidth, newHeight);
@@ -1900,24 +2007,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (targetX < offsetX) {
             var newWidth = offsetX - targetX;
             var newHeight = newWidth / ratio;
-            var _contraintBoxSize9 = _this5.contraintBoxSize([newWidth, newHeight], [offsetX, offsetY]);
+            var _contraintBoxSize17 = _this5.contraintBoxSize([newWidth, newHeight], [offsetX, offsetY]);
 
-            var _contraintBoxSize10 = _slicedToArray(_contraintBoxSize9, 2);
+            var _contraintBoxSize18 = _slicedToArray(_contraintBoxSize17, 2);
 
-            newWidth = _contraintBoxSize10[0];
-            newHeight = _contraintBoxSize10[1];
+            newWidth = _contraintBoxSize18[0];
+            newHeight = _contraintBoxSize18[1];
 
 
             _this5.updateBox(targetX, offsetY - newHeight, newWidth, newHeight);
           } else {
             var _newWidth = targetX - offsetX;
             var _newHeight = _newWidth / ratio;
-            var _contraintBoxSize11 = _this5.contraintBoxSize([_newWidth, _newHeight], [b.width - offsetX, b.height - offsetY]);
+            var _contraintBoxSize19 = _this5.contraintBoxSize([_newWidth, _newHeight], [b.width - offsetX, b.height - offsetY]);
 
-            var _contraintBoxSize12 = _slicedToArray(_contraintBoxSize11, 2);
+            var _contraintBoxSize20 = _slicedToArray(_contraintBoxSize19, 2);
 
-            _newWidth = _contraintBoxSize12[0];
-            _newHeight = _contraintBoxSize12[1];
+            _newWidth = _contraintBoxSize20[0];
+            _newHeight = _contraintBoxSize20[1];
 
 
             _this5.updateBox(offsetX, offsetY, _newWidth, _newHeight);
@@ -1926,14 +2033,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }, {
       key: 'contraintBoxSize',
-      value: function contraintBoxSize(_ref9, _ref10) {
-        var _ref12 = _slicedToArray(_ref9, 2),
-            width = _ref12[0],
-            height = _ref12[1];
+      value: function contraintBoxSize(_ref10, _ref11) {
+        var _ref13 = _slicedToArray(_ref10, 2),
+            width = _ref13[0],
+            height = _ref13[1];
 
-        var _ref11 = _slicedToArray(_ref10, 2),
-            maxWidth = _ref11[0],
-            maxHeight = _ref11[1];
+        var _ref12 = _slicedToArray(_ref11, 2),
+            maxWidth = _ref12[0],
+            maxHeight = _ref12[1];
 
         var ratio = this.version.getRatio();
 
@@ -2056,10 +2163,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (img) {
           versionsSubs = new CompositeDisposable();
 
-          asPair(versions).forEach(function (_ref13) {
-            var _ref14 = _slicedToArray(_ref13, 2),
-                versionName = _ref14[0],
-                version = _ref14[1];
+          asPair(versions).forEach(function (_ref14) {
+            var _ref15 = _slicedToArray(_ref14, 2),
+                versionName = _ref15[0],
+                version = _ref15[1];
 
             version.setBox();
             var div = getVersion(img, version);
@@ -2080,10 +2187,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       })]);
 
       function collectVersions() {
-        return asPair(versions).reduce(function (memo, _ref15) {
-          var _ref16 = _slicedToArray(_ref15, 2),
-              name = _ref16[0],
-              version = _ref16[1];
+        return asPair(versions).reduce(function (memo, _ref16) {
+          var _ref17 = _slicedToArray(_ref16, 2),
+              name = _ref17[0],
+              version = _ref17[1];
 
           memo[name] = version.box;
           return memo;
@@ -2142,21 +2249,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
   }
 
-  var lineAt = scanLines(function (_ref17, index) {
-    var line = _ref17.line,
-        charIndex = _ref17.charIndex;
+  var lineAt = scanLines(function (_ref18, index) {
+    var line = _ref18.line,
+        charIndex = _ref18.charIndex;
     return index >= charIndex && index <= charIndex + line.length ? line : undefined;
   });
 
-  var lineStartIndexAt = scanLines(function (_ref18, index) {
-    var line = _ref18.line,
-        charIndex = _ref18.charIndex;
+  var lineStartIndexAt = scanLines(function (_ref19, index) {
+    var line = _ref19.line,
+        charIndex = _ref19.charIndex;
     return index >= charIndex && index <= charIndex + line.length ? charIndex : undefined;
   });
 
-  var lineEndIndexAt = scanLines(function (_ref19, index) {
-    var line = _ref19.line,
-        charIndex = _ref19.charIndex;
+  var lineEndIndexAt = scanLines(function (_ref20, index) {
+    var line = _ref20.line,
+        charIndex = _ref20.charIndex;
     return index >= charIndex && index <= charIndex + line.length ? charIndex + line.length : undefined;
   });
 
@@ -2476,10 +2583,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   var onVersionsChange = function onVersionsChange(el, versions) {
     var container = parent(el, '.controls');
-    asPair(versions).forEach(function (_ref20) {
-      var _ref21 = _slicedToArray(_ref20, 2),
-          name = _ref21[0],
-          box = _ref21[1];
+    asPair(versions).forEach(function (_ref21) {
+      var _ref22 = _slicedToArray(_ref21, 2),
+          name = _ref22[0],
+          box = _ref22[1];
 
       if (box) {
         container.querySelector('input[data-version-name="' + name + '"]').value = JSON.stringify(box);
@@ -2492,7 +2599,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     on: 'load',
     previewers: [[function (o) {
       return o.file.type === 'text/plain';
-    }, getTextPreview]]
+    }, getTextPreview], [function (o) {
+      return o.file.type === 'application/pdf';
+    }, getPDFPreview]]
   });
   widgets('file-versions', 'input[type="file"]', {
     on: 'load',

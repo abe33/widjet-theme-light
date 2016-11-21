@@ -431,6 +431,10 @@ progress {
       max-width: 600px;
       max-height: 220px;
       display: block; }
+    .file-input .file-container .preview iframe {
+      width: 100%;
+      height: 220px;
+      border: none; }
     .file-input .file-container .preview:empty:before {
       content: "";
       font-family: "FontAwesome";
@@ -562,6 +566,10 @@ progress {
         right: 0; }
         .version-editor .version-preview .version-box .drag-box:active {
           cursor: grabbing; }
+      .version-editor .version-preview .version-box .top-handle,
+      .version-editor .version-preview .version-box .left-handle,
+      .version-editor .version-preview .version-box .bottom-handle,
+      .version-editor .version-preview .version-box .right-handle,
       .version-editor .version-preview .version-box .top-left-handle,
       .version-editor .version-preview .version-box .top-right-handle,
       .version-editor .version-preview .version-box .bottom-right-handle,
@@ -575,6 +583,10 @@ progress {
         left: initial;
         bottom: initial;
         right: initial; }
+        .version-editor .version-preview .version-box .top-handle:before,
+        .version-editor .version-preview .version-box .left-handle:before,
+        .version-editor .version-preview .version-box .bottom-handle:before,
+        .version-editor .version-preview .version-box .right-handle:before,
         .version-editor .version-preview .version-box .top-left-handle:before,
         .version-editor .version-preview .version-box .top-right-handle:before,
         .version-editor .version-preview .version-box .bottom-right-handle:before,
@@ -588,14 +600,22 @@ progress {
           left: -4px;
           bottom: initial;
           right: initial; }
-      .version-editor .version-preview .version-box .top-left-handle, .version-editor .version-preview .version-box .top-right-handle {
+      .version-editor .version-preview .version-box .top-left-handle, .version-editor .version-preview .version-box .top-right-handle, .version-editor .version-preview .version-box .top-handle {
         top: -2px; }
-      .version-editor .version-preview .version-box .bottom-left-handle, .version-editor .version-preview .version-box .bottom-right-handle {
+      .version-editor .version-preview .version-box .bottom-left-handle, .version-editor .version-preview .version-box .bottom-right-handle, .version-editor .version-preview .version-box .bottom-handle {
         bottom: -2px; }
-      .version-editor .version-preview .version-box .top-left-handle, .version-editor .version-preview .version-box .bottom-left-handle {
+      .version-editor .version-preview .version-box .top-left-handle, .version-editor .version-preview .version-box .bottom-left-handle, .version-editor .version-preview .version-box .left-handle {
         left: -2px; }
-      .version-editor .version-preview .version-box .top-right-handle, .version-editor .version-preview .version-box .bottom-right-handle {
+      .version-editor .version-preview .version-box .top-right-handle, .version-editor .version-preview .version-box .bottom-right-handle, .version-editor .version-preview .version-box .right-handle {
         right: -2px; }
+      .version-editor .version-preview .version-box .top-handle, .version-editor .version-preview .version-box .bottom-handle {
+        cursor: ns-resize;
+        left: 50%;
+        margin-left: -2px; }
+      .version-editor .version-preview .version-box .left-handle, .version-editor .version-preview .version-box .right-handle {
+        cursor: ew-resize;
+        top: 50%;
+        margin-top: -2px; }
       .version-editor .version-preview .version-box .top-left-handle, .version-editor .version-preview .version-box .bottom-right-handle {
         cursor: nwse-resize; }
       .version-editor .version-preview .version-box .top-right-handle, .version-editor .version-preview .version-box .bottom-left-handle {
