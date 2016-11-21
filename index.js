@@ -1372,7 +1372,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
   };
 
-  var DEFAULT_PREVIEWERS = [[imageType('jpeg', 'png', 'gif', 'bmp'), function (o) {
+  var DEFAULT_PREVIEWERS = [[imageType('jpeg', 'png', 'gif', 'bmp', 'svg+xml'), function (o) {
     return getImagePreview(o);
   }], [always, function (o) {
     return Promise.resolve();
@@ -1643,6 +1643,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             canvas = _getCanvas2[0],
             context = _getCanvas2[1];
 
+        context.clearRect.apply(context, _toConsumableArray(this.targetBox));
         context.drawImage.apply(context, [image].concat(_toConsumableArray(this.getBox(image))));
         return canvas;
       }
@@ -1825,7 +1826,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var ratio = _this5.version.getRatio();
           var center = bb.left + bb.width / 2;
           var newHeight = bb.bottom - y;
-          var newWidth = newHeight / ratio;
+          var newWidth = newHeight * ratio;
           var _contraintBoxSize = _this5.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), bb.bottom]);
 
           var _contraintBoxSize2 = _slicedToArray(_contraintBoxSize, 2);
@@ -1848,7 +1849,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var ratio = _this5.version.getRatio();
           var center = bb.left + bb.width / 2;
           var newHeight = y - bb.top;
-          var newWidth = newHeight / ratio;
+          var newWidth = newHeight * ratio;
           var _contraintBoxSize3 = _this5.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), b.height - bb.top]);
 
           var _contraintBoxSize4 = _slicedToArray(_contraintBoxSize3, 2);
@@ -1895,7 +1896,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var center = bb.top + bb.height / 2;
           var newWidth = x - bb.left;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize7 = _this5.contraintBoxSize([newWidth, newHeight], [b.height - bb.top, Math.min(center * 2, (b.height - center) * 2)]);
+          var _contraintBoxSize7 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, Math.min(center * 2, (b.height - center) * 2)]);
 
           var _contraintBoxSize8 = _slicedToArray(_contraintBoxSize7, 2);
 
@@ -2177,7 +2178,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 version.setBox(box);
                 version.getVersion(img);
                 onVersionsChange && onVersionsChange(input, collectVersions());
-              });
+              })['catch'](function () {});
             }));
             versionsContainer.appendChild(div);
           });

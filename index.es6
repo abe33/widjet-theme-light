@@ -1106,7 +1106,7 @@ const imageType = (...ts) => {
 };
 
 const DEFAULT_PREVIEWERS = [
-  [imageType('jpeg', 'png', 'gif', 'bmp'), o => getImagePreview(o)],
+  [imageType('jpeg', 'png', 'gif', 'bmp', 'svg+xml'), o => getImagePreview(o)],
   [always, o => Promise.resolve()]
 ];
 
@@ -1334,6 +1334,7 @@ class Version {
 
   getVersion (image) {
     const [canvas, context] = this.getCanvas();
+    context.clearRect(...this.targetBox);
     context.drawImage(image, ...this.getBox(image));
     return canvas
   }
@@ -1527,7 +1528,7 @@ class VersionEditor {
       const ratio = this.version.getRatio();
       const center = bb.left + bb.width / 2;
       let newHeight = bb.bottom - y;
-      let newWidth = newHeight / ratio;[newWidth, newHeight] = this.contraintBoxSize([
+      let newWidth = newHeight * ratio;[newWidth, newHeight] = this.contraintBoxSize([
         newWidth, newHeight
       ], [
         Math.min(center * 2, (b.width - center) * 2),
@@ -1551,7 +1552,7 @@ class VersionEditor {
       const ratio = this.version.getRatio();
       const center = bb.left + bb.width / 2;
       let newHeight = y - bb.top;
-      let newWidth = newHeight / ratio;[newWidth, newHeight] = this.contraintBoxSize([
+      let newWidth = newHeight * ratio;[newWidth, newHeight] = this.contraintBoxSize([
         newWidth, newHeight
       ], [
         Math.min(center * 2, (b.width - center) * 2),
@@ -1602,7 +1603,7 @@ class VersionEditor {
       let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
         newWidth, newHeight
       ], [
-        b.height - bb.top,
+        b.width - bb.left,
         Math.min(center * 2, (b.height - center) * 2)
       ]);
 
@@ -1875,7 +1876,7 @@ widgets.define('file-versions', (options) => {
                 version.setBox(box);
                 version.getVersion(img);
                 onVersionsChange && onVersionsChange(input, collectVersions());
-              });
+              }).catch(() => {});
             }));
             versionsContainer.appendChild(div);
           });
