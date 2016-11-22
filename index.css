@@ -382,11 +382,9 @@ progress {
   display: none; }
 .file-input input[type="file"] {
   opacity: 0;
-  z-index: 3;
   margin: 0;
   height: 100%;
   width: 100%;
-  cursor: pointer;
   position: absolute;
   top: 0;
   left: 0;
@@ -412,6 +410,8 @@ progress {
       font-family: "FontAwesome"; }
   .file-input .file-container label {
     display: block;
+    z-index: 3;
+    cursor: pointer;
     position: absolute;
     top: 0;
     left: 0;

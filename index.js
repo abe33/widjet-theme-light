@@ -1437,6 +1437,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
   }
 
+  var id = 0;
+  var nextId = function nextId() {
+    return 'file-input-' + ++id;
+  };
+
   widgets.define('file-preview', function (options) {
     var _merge = merge(defaults, options),
         wrap = _merge.wrap,
@@ -1453,9 +1458,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var getPreview = previewBuilder(options.previewers);
 
     return function (input) {
+      if (!input.id) {
+        input.id = nextId();
+      }
+
       var container = input.parentNode;
-      var wrapper = wrap(input);
       var nextSibling = input.nextElementSibling;
+      var wrapper = wrap(input);
       container.insertBefore(wrapper, nextSibling);
 
       var previewContainer = wrapper.querySelector(previewSelector);
@@ -1601,8 +1610,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     formatSize: formatSize,
     formatDimensions: formatDimensions,
     wrap: function wrap(input) {
-      var wrapper = getNode('\n      <div class="file-input">\n        <div class=\'file-container\'>\n          <label></label>\n          <div class="preview"></div>\n          <button type="button" tabindex="-1"><span>Reset</span></button>\n        </div>\n\n        <progress min="0" max="100"></progress>\n\n        <div class="meta">\n          <div class="name"></div>\n          <div class="mime"></div>\n          <div class="size"></div>\n          <div class="dimensions"></div>\n        </div>\n      </div>\n    ');
-      wrapper.querySelector('label').appendChild(input);
+      var wrapper = getNode('\n      <div class="file-input">\n        <div class=\'file-container\'>\n          <label for="' + input.id + '"></label>\n          <div class="preview"></div>\n          <button type="button" tabindex="-1"><span>Reset</span></button>\n        </div>\n\n        <progress min="0" max="100"></progress>\n\n        <div class="meta">\n          <div class="name"></div>\n          <div class="mime"></div>\n          <div class="size"></div>\n          <div class="dimensions"></div>\n        </div>\n      </div>\n    ');
+
+      var label = wrapper.querySelector('label');
+      label.parentNode.insertBefore(input, label);
       return wrapper;
     }
   };
