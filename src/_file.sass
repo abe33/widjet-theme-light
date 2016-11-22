@@ -5,11 +5,9 @@
 
   input[type="file"]
     opacity: 0
-    z-index: 3
     margin: 0
     height: 100%
     width: 100%
-    cursor: pointer
     +absolute(0,0,0,0)
 
   .file-container
@@ -34,6 +32,8 @@
 
     label
       display: block
+      z-index: 3
+      cursor: pointer
       +absolute(0,0,0,0)
 
     .preview
