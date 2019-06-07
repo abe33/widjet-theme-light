@@ -36,13 +36,14 @@
     "rollup-plugin-includepaths": "^0.1.6",
     "rollup-plugin-node-resolve": "^2.0.0",
     "standard": "^5.4.1",
-    "widjet": "^1.0.2",
-    "widjet-disposables": "^0.1.7",
-    "widjet-file-upload": "^0.3.0",
-    "widjet-select-multiple": "^1.0.1",
-    "widjet-text-editor": "^1.0.0",
-    "widjet-utils": "^0.6.0",
-    "widjet-validation": "^1.0.2"
+    "widjet": "^1.2.0",
+    "widjet-disposables": "^1.0",
+    "widjet-file-upload": "^1.0",
+    "widjet-select-multiple": "^1.1.1",
+    "widjet-text-editor": "^1.1.0",
+    "widjet-json-form": "^1.1.0",
+    "widjet-utils": "^1.1",
+    "widjet-validation": "^1.1"
   },
   "standard": {
     "parser": "babel-eslint",
