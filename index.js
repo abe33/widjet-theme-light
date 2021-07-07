@@ -173,9 +173,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fn.apply(null, args);
   });
 
-  var identity = function identity(a) {
-    return a;
-  };
   var always = function always(a) {
     return true;
   };
@@ -206,23 +203,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     return doWhen(predicates);
   });
-
-  function compose() {
-    for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      fns[_key3] = arguments[_key3];
-    }
-
-    fns.push(apply(fns.pop()));
-    return function () {
-      for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
-      }
-
-      return fns.reduceRight(function (memo, fn) {
-        return fn(memo);
-      }, args);
-    };
-  }
 
   var asArray = function asArray(collection) {
     return slice.call(collection);
@@ -422,88 +402,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
   }
 
-  var Hash = function () {
-    function Hash() {
-      _classCallCheck(this, Hash);
-
-      this.clear();
-    }
-
-    _createClass(Hash, [{
-      key: 'clear',
-      value: function clear() {
-        this.keys = [];
-        this.values = [];
-      }
-    }, {
-      key: 'set',
-      value: function set(key, value) {
-        if (this.hasKey(key)) {
-          var index = this.keys.indexOf(key);
-          this.values[index] = value;
-        } else {
-          this.keys.push(key);
-          this.values.push(value);
-        }
-      }
-    }, {
-      key: 'get',
-      value: function get(key) {
-        return this.values[this.keys.indexOf(key)];
-      }
-    }, {
-      key: 'getKey',
-      value: function getKey(value) {
-        return this.keys[this.values.indexOf(value)];
-      }
-    }, {
-      key: 'hasKey',
-      value: function hasKey(key) {
-        return this.keys.indexOf(key) > -1;
-      }
-    }, {
-      key: 'unset',
-      value: function unset(key) {
-        var index = this.keys.indexOf(key);
-        this.keys.splice(index, 1);
-        this.values.splice(index, 1);
-      }
-    }, {
-      key: 'each',
-      value: function each(block) {
-        if (!block) {
-          return;
-        }
-
-        this.values.forEach(block);
-      }
-    }, {
-      key: 'eachKey',
-      value: function eachKey(block) {
-        if (!block) {
-          return;
-        }
-
-        this.keys.forEach(block);
-      }
-    }, {
-      key: 'eachPair',
-      value: function eachPair(block) {
-        var _this3 = this;
-
-        if (!block) {
-          return;
-        }
-
-        this.keys.forEach(function (key) {
-          return block(key, _this3.get(key));
-        });
-      }
-    }]);
-
-    return Hash;
-  }();
-
   var Widget = function () {
     function Widget(element, handler, options, handledClass) {
       _classCallCheck(this, Widget);
@@ -637,6 +535,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var ifCond = options['if'];
     var unlessCond = options.unless;
     var targetFrame = options.targetFrame;
+    var handledClass = name + '-handled';
     var events = options.on || 'init';
     var mediaCondition = options.media;
     var mediaHandler = void 0;
@@ -659,9 +558,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       events = events.split(/\s+/g);
     }
 
-    // The widgets instances are stored in a Hash with the DOM element they
+    // The widgets instances are stored in a Map with the DOM element they
     // target as key. The instances hashes are stored per widget type.
-    var instances = INSTANCES[name] || (INSTANCES[name] = new Hash());
+    var instances = INSTANCES[name] || (INSTANCES[name] = new Map());
 
     // This method execute a test condition for the given element. The condition
     // can be either a function or a value converted to boolean.
@@ -669,17 +568,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return typeof condition === 'function' ? condition(element) : !!condition;
     }
 
-    // The DOM elements handled by a widget will receive a handled class
-    // to differenciate them from unhandled elements.
-    var handledClass = name + '-handled';
-
     // This method will test if an element can be handled by the current widget.
     // It will test for both the handled class presence and the widget
     // conditions. Note that if both the `if` and `unless` conditions
     // are passed in the options object they will be tested as both part
     // of a single `&&` condition.
-    function canBeHandled(element) {
-      var res = !element.classList.contains(handledClass);
+    function canBeHandled(element, widget) {
+      var res = !widgets.hasBeenHandled(element, widget);
       res = ifCond ? res && testCondition(ifCond, element) : res;
       res = unlessCond ? res && !testCondition(unlessCond, element) : res;
       return res;
@@ -693,23 +588,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       // to simply the setup, an object with `min` and `max` property containing
       // the minimal and maximal window width where the widget is activated.
       if (mediaCondition instanceof Object) {
-        (function () {
-          var _mediaCondition = mediaCondition,
-              min = _mediaCondition.min,
-              max = _mediaCondition.max;
+        var _mediaCondition = mediaCondition,
+            min = _mediaCondition.min,
+            max = _mediaCondition.max;
 
-          mediaCondition = function __mediaCondition() {
-            var res = true;
+        mediaCondition = function __mediaCondition() {
+          var res = true;
 
-            var _widgets$getScreenSiz = widgets.getScreenSize(targetWindow),
-                _widgets$getScreenSiz2 = _slicedToArray(_widgets$getScreenSiz, 1),
-                width = _widgets$getScreenSiz2[0];
+          var _widgets$getScreenSiz = widgets.getScreenSize(targetWindow),
+              _widgets$getScreenSiz2 = _slicedToArray(_widgets$getScreenSiz, 1),
+              width = _widgets$getScreenSiz2[0];
 
-            res = min != null ? res && width >= min : res;
-            res = max != null ? res && width <= max : res;
-            return res;
-          };
-        })();
+          res = min != null ? res && width >= min : res;
+          res = max != null ? res && width <= max : res;
+          return res;
+        };
       }
 
       // The media handler is registered on the `resize` event of the `window`
@@ -725,7 +618,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       };
 
       widgets.subscribe(name, targetWindow, 'resize', function () {
-        instances.eachPair(function (element, widget) {
+        instances.forEach(function (widget, element) {
           return mediaHandler(element, widget);
         });
       });
@@ -737,7 +630,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var elements = targetDocument.querySelectorAll(selector);
 
       asArray(elements).forEach(function (element) {
-        if (!canBeHandled(element)) {
+        if (!canBeHandled(element, name)) {
           return;
         }
 
@@ -773,6 +666,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     });
   }
+
+  /**
+   * Returns whether the specified `element` has been handled by the specified
+   * `widget` handler.
+   *
+   * @param  {HTMLElement} element the element to check whether
+   *                               it was handled or not
+   * @param  {string} widjet the name of the widget handler to check
+   *                         against the element
+   */
+  widgets.hasBeenHandled = function hasBeenHandled(element, widget) {
+    return this.widgetsFor(element, widget);
+  };
 
   /**
    * A helper function used to dispatch an event from a given `source` or from
@@ -875,8 +781,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @param {...string} names the names of the wigets to delete
    */
   widgets.reset = function () {
-    for (var _len5 = arguments.length, names = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      names[_key5] = arguments[_key5];
+    for (var _len3 = arguments.length, names = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      names[_key3] = arguments[_key3];
     }
 
     if (names.length === 0) {
@@ -907,7 +813,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return Object.keys(INSTANCES).map(function (key) {
         return INSTANCES[key];
       }).filter(function (instances) {
-        return instances.hasKey(element);
+        return instances.has(element);
       }).map(function (instances) {
         return instances.get(element);
       }).reduce(function (memo, arr) {
@@ -952,15 +858,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @param {...string} names
    */
   widgets.release = function () {
-    for (var _len6 = arguments.length, names = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-      names[_key6] = arguments[_key6];
+    for (var _len4 = arguments.length, names = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      names[_key4] = arguments[_key4];
     }
 
     if (names.length === 0) {
       names = Object.keys(INSTANCES);
     }
     names.forEach(function (name) {
-      INSTANCES[name] && INSTANCES[name].each(function (value) {
+      INSTANCES[name] && INSTANCES[name].forEach(function (value) {
         return value.dispose();
       });
     });
@@ -972,15 +878,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @param  {...string} names [description]
    */
   widgets.activate = function () {
-    for (var _len7 = arguments.length, names = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-      names[_key7] = arguments[_key7];
+    for (var _len5 = arguments.length, names = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      names[_key5] = arguments[_key5];
     }
 
     if (names.length === 0) {
       names = Object.keys(INSTANCES);
     }
     names.forEach(function (name) {
-      INSTANCES[name] && INSTANCES[name].each(function (value) {
+      INSTANCES[name] && INSTANCES[name].forEach(function (value) {
         return value.activate();
       });
     });
@@ -992,23 +898,346 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @param  {...string} names [description]
    */
   widgets.deactivate = function () {
-    for (var _len8 = arguments.length, names = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-      names[_key8] = arguments[_key8];
+    for (var _len6 = arguments.length, names = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      names[_key6] = arguments[_key6];
     }
 
     if (names.length === 0) {
       names = Object.keys(INSTANCES);
     }
     names.forEach(function (name) {
-      INSTANCES[name] && INSTANCES[name].each(function (value) {
+      INSTANCES[name] && INSTANCES[name].forEach(function (value) {
         return value.deactivate();
       });
     });
   };
 
+  var Disposable$1 = function () {
+    function Disposable$1(block) {
+      _classCallCheck(this, Disposable$1);
+
+      if (!block) {
+        throw new Error('A Disposable must be created with a dispose callback');
+      }
+      this.block = block;
+    }
+
+    _createClass(Disposable$1, [{
+      key: 'dispose',
+      value: function dispose() {
+        if (this.block) {
+          this.block();
+          delete this.block;
+        }
+      }
+    }]);
+
+    return Disposable$1;
+  }();
+
+  var CompositeDisposable$1 = function (_Disposable$) {
+    _inherits(CompositeDisposable$1, _Disposable$);
+
+    function CompositeDisposable$1() {
+      var disposables = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      _classCallCheck(this, CompositeDisposable$1);
+
+      var _this3 = _possibleConstructorReturn(this, (CompositeDisposable$1.__proto__ || Object.getPrototypeOf(CompositeDisposable$1)).call(this, function () {
+        for (var i = 0; i < _this3.disposables.length; i++) {
+          var disposable = _this3.disposables[i];
+          disposable.dispose();
+        }
+      }));
+
+      _this3.disposables = disposables;
+      return _this3;
+    }
+
+    _createClass(CompositeDisposable$1, [{
+      key: 'add',
+      value: function add(disposable) {
+        this.disposables.push(disposable);
+      }
+    }, {
+      key: 'remove',
+      value: function remove(disposable) {
+        var index = this.disposables.indexOf(disposable);
+
+        if (index !== -1) {
+          this.disposables.splice(index, 1);
+        }
+      }
+    }]);
+
+    return CompositeDisposable$1;
+  }(Disposable$1);
+
+  var DisposableEvent$1 = function (_Disposable$2) {
+    _inherits(DisposableEvent$1, _Disposable$2);
+
+    function DisposableEvent$1(target, event, listener) {
+      _classCallCheck(this, DisposableEvent$1);
+
+      var events = event.split(/\s+/g);
+
+      if (typeof target.addEventListener === 'function') {
+        var _this4 = _possibleConstructorReturn(this, (DisposableEvent$1.__proto__ || Object.getPrototypeOf(DisposableEvent$1)).call(this, function () {
+          return events.forEach(function (e) {
+            return target.removeEventListener(e, listener);
+          });
+        }));
+
+        events.forEach(function (e) {
+          return target.addEventListener(e, listener);
+        });
+      } else if (typeof target.on === 'function') {
+        var _this4 = _possibleConstructorReturn(this, (DisposableEvent$1.__proto__ || Object.getPrototypeOf(DisposableEvent$1)).call(this, function () {
+          return events.forEach(function (e) {
+            return target.off(e, listener);
+          });
+        }));
+
+        events.forEach(function (e) {
+          return target.on(e, listener);
+        });
+      } else {
+        throw new Error('The passed-in source must have either a addEventListener or on method');
+      }
+      return _possibleConstructorReturn(_this4);
+    }
+
+    return DisposableEvent$1;
+  }(Disposable$1);
+
+  //  ######  ######## ########
+  // ##    ##    ##    ##     ##
+  // ##          ##    ##     ##
+  //  ######     ##    ##     ##
+  //       ##    ##    ##     ##
+  // ##    ##    ##    ##     ##
+  //  ######     ##    ########
+
+
+  var slice$1 = Array.prototype.slice;
+
+  var _curry$1 = function _curry$1(n, fn) {
+    var curryArgs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+    return function () {
+      for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
+      }
+
+      var concatArgs = curryArgs.concat(args);
+
+      return n > concatArgs.length ? _curry$1(n, fn, concatArgs) : fn.apply(null, concatArgs);
+    };
+  };
+
+  function curryN$1(n, fn) {
+    return _curry$1(n, fn);
+  }
+
+  var curry1$1 = curryN$1(2, curryN$1)(1);
+  var curry2$1 = curryN$1(2, curryN$1)(2);
+  var curry3$1 = curryN$1(2, curryN$1)(3);
+  var curry4$1 = curryN$1(2, curryN$1)(4);
+
+  var apply$1 = curry2$1(function (fn, args) {
+    return fn.apply(null, args);
+  });
+
+  var identity$1 = function identity$1(a) {
+    return a;
+  };
+  var always$1 = function always$1(a) {
+    return true;
+  };
+
+  var head$1 = function head$1(a) {
+    return a[0];
+  };
+
+  var tail$1 = function tail$1(a) {
+    return a.slice(1);
+  };
+
+  var when$1 = curry2$1(function (predicates) {
+    for (var _len8 = arguments.length, values = Array(_len8 > 1 ? _len8 - 1 : 0), _key8 = 1; _key8 < _len8; _key8++) {
+      values[_key8 - 1] = arguments[_key8];
+    }
+
+    var doWhen = function doWhen(a) {
+      var _head$ = head$1(a),
+          _head$2 = _slicedToArray(_head$, 2),
+          predicate = _head$2[0],
+          resolve = _head$2[1];
+
+      return predicate.apply(undefined, values) ? resolve.apply(undefined, values) : doWhen(tail$1(a));
+    };
+
+    return doWhen(predicates);
+  });
+
+  function compose$1() {
+    for (var _len9 = arguments.length, fns = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+      fns[_key9] = arguments[_key9];
+    }
+
+    fns.push(apply$1(fns.pop()));
+    return function () {
+      for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+        args[_key10] = arguments[_key10];
+      }
+
+      return fns.reduceRight(function (memo, fn) {
+        return fn(memo);
+      }, args);
+    };
+  }
+
+  var asArray$1 = function asArray$1(collection) {
+    return slice$1.call(collection);
+  };
+  var asPair$1 = function asPair$1(object) {
+    return Object.keys(object).map(function (k) {
+      return [k, object[k]];
+    });
+  };
+
+  var fill$1 = curry2$1(function (len, value) {
+    return new Array(len).fill(value);
+  });
+
+  var mapEach$1 = curry2$1(function (maps, values) {
+    return values.map(function (v, i) {
+      return maps[i % maps.length](v);
+    });
+  });
+
+  // ########   #######  ##     ##
+  // ##     ## ##     ## ###   ###
+  // ##     ## ##     ## #### ####
+  // ##     ## ##     ## ## ### ##
+  // ##     ## ##     ## ##     ##
+  // ##     ## ##     ## ##     ##
+  // ########   #######  ##     ##
+
+  var previewNode$1 = void 0;
+
+  function getNode$1(html) {
+    if (!html) {
+      return undefined;
+    }
+    if (previewNode$1 == null) {
+      previewNode$1 = document.createElement('div');
+    }
+
+    previewNode$1.innerHTML = html;
+    var node = previewNode$1.firstElementChild;
+    if (node) {
+      previewNode$1.removeChild(node);
+    }
+    previewNode$1.innerHTML = '';
+    return node || null;
+  }
+
+  function detachNode$1(node) {
+    node && node.parentNode && node.parentNode.removeChild(node);
+  }
+
+  // ########     ###    ########  ######## ##    ## ########  ######
+  // ##     ##   ## ##   ##     ## ##       ###   ##    ##    ##    ##
+  // ##     ##  ##   ##  ##     ## ##       ####  ##    ##    ##
+  // ########  ##     ## ########  ######   ## ## ##    ##     ######
+  // ##        ######### ##   ##   ##       ##  ####    ##          ##
+  // ##        ##     ## ##    ##  ##       ##   ###    ##    ##    ##
+  // ##        ##     ## ##     ## ######## ##    ##    ##     ######
+
+  function eachParent$1(node, block) {
+    var parent = node.parentNode;
+
+    while (parent) {
+      block(parent);
+
+      if (parent.nodeName === 'HTML') {
+        break;
+      }
+      parent = parent.parentNode;
+    }
+  }
+
+  function parents$1(node) {
+    var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '*';
+
+    var parentNodes = [];
+
+    eachParent$1(node, function (parent) {
+      if (parent.matches && parent.matches(selector)) {
+        parentNodes.push(parent);
+      }
+    });
+
+    return parentNodes;
+  }
+
+  function parent$1(node) {
+    var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '*';
+
+    return parents$1(node, selector)[0];
+  }
+
+  function nodeAndParents$1(node) {
+    var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '*';
+
+    return [node].concat(parents$1(node, selector));
+  }
+
+  // ######## ##     ## ######## ##    ## ########  ######
+  // ##       ##     ## ##       ###   ##    ##    ##    ##
+  // ##       ##     ## ##       ####  ##    ##    ##
+  // ######   ##     ## ######   ## ## ##    ##     ######
+  // ##        ##   ##  ##       ##  ####    ##          ##
+  // ##         ## ##   ##       ##   ###    ##    ##    ##
+  // ########    ###    ######## ##    ##    ##     ######
+
+  function appendData$1(data, event) {
+    if (data) {
+      event.data = data;
+    }
+    return event;
+  }
+
+  var newEvent$1 = function newEvent$1(type, data, props) {
+    return appendData$1(data, new window.Event(type, {
+      bubbles: props.bubbles != null ? props.bubbles : true,
+      cancelable: props.cancelable != null ? props.cancelable : true
+    }));
+  };
+
+  var createEvent$1 = function createEvent$1(type, data, props) {
+    var event = document.createEvent('Event');
+    event.initEvent(type, props.bubbles != null ? props.bubbles : true, props.cancelable != null ? props.cancelable : true);
+    return appendData$1(data, event);
+  };
+
+  var createEventObject$1 = function createEventObject$1(type, data, props) {
+    var event = document.createEventObject();
+    event.type = type;
+    event.cancelBubble = props.bubbles === false;
+    delete props.bubbles;
+    for (var k in props) {
+      event[k] = props[k];
+    }
+    return appendData$1(data, event);
+  };
+
+  var domEventImplementation$1 = void 0;
+
   function inputPredicate() {
-    for (var _len9 = arguments.length, types = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-      types[_key9] = arguments[_key9];
+    for (var _len11 = arguments.length, types = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+      types[_key11] = arguments[_key11];
     }
 
     return function (input) {
@@ -1048,7 +1277,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
   };
 
-  var getFileValidator = when([[function (s) {
+  var getFileValidator = when$1([[function (s) {
     return (/^\./.test(s)
     );
   }, function (s) {
@@ -1062,32 +1291,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return function (f) {
       return match('^' + s.replace('*', ''), f.type);
     };
-  }], [always, function (s) {
+  }], [always$1, function (s) {
     return function (f) {
       return f.type === s;
     };
   }]]);
 
-  var DEFAULT_VALIDATORS = [[inputPredicate('email'), validateEmail], [inputPredicate('checkbox'), validateChecked], [always, validatePresence]];
+  var DEFAULT_VALIDATORS = [[inputPredicate('email'), validateEmail], [inputPredicate('checkbox'), validateChecked], [always$1, validatePresence]];
 
   var DEFAULT_RESOLVERS = [[inputPredicate('checkbox'), function (i) {
     return i.checked;
   }], [inputPredicate('number', 'range'), function (i) {
     return i.value && parseFloat(i.value);
   }], [inputPredicate('radio'), function (i) {
-    return radioValue(parent(i, 'form'), i.name);
+    return radioValue(parent$1(i, 'form'), i.name);
   }], [inputPredicate('file'), function (i) {
     return i.files;
   }], [selectPredicate(true), function (i) {
     return optionValues(i);
   }], [selectPredicate(false), function (i) {
     return optionValues(i)[0];
-  }], [always, function (i) {
+  }], [always$1, function (i) {
     return i.value;
   }]];
 
   function optionValues(input) {
-    return asArray(input.querySelectorAll('option')).filter(function (o) {
+    return asArray$1(input.querySelectorAll('option')).filter(function (o) {
       return o.selected;
     }).map(function (o) {
       return o.value;
@@ -1095,7 +1324,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   }
 
   function radioValue(form, name) {
-    var checked = form && asArray(form.querySelectorAll('[name="' + name + '"]')).filter(function (i) {
+    var checked = form && asArray$1(form.querySelectorAll('[name="' + name + '"]')).filter(function (i) {
       return i.checked;
     })[0];
     return checked ? checked.value : undefined;
@@ -1114,9 +1343,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         input.validate();
       }
 
-      return new CompositeDisposable([new DisposableEvent(input, events, function () {
+      return new CompositeDisposable$1([new DisposableEvent$1(input, events, function () {
         return input.validate();
-      }), new Disposable(function () {
+      }), new Disposable$1(function () {
         return delete input.validate;
       })]);
     };
@@ -1132,17 +1361,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     return function (form) {
       form.validate = function () {
-        return asArray(form.querySelectorAll(required)).reduce(reducer, false);
+        return asArray$1(form.querySelectorAll(required)).reduce(reducer, false);
       };
 
       if (options.validateOnInit) {
         form.validate();
       }
 
-      return new CompositeDisposable([new Disposable(function () {
+      return new CompositeDisposable$1([new Disposable$1(function () {
         form.removeAttribute('novalidate');
         delete form.validate;
-      }), new DisposableEvent(form, events, function (e) {
+      }), new DisposableEvent$1(form, events, function (e) {
         var hasErrors = form.validate();
         if (hasErrors) {
           e.stopImmediatePropagation();
@@ -1156,16 +1385,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   function getValidator(options) {
     var validators = (options.validators || []).concat(DEFAULT_VALIDATORS);
     var resolvers = (options.resolvers || []).concat(DEFAULT_RESOLVERS);
-    var i18n = options.i18n || identity;
-    var onSuccess = options.onSuccess || identity;
+    var i18n = options.i18n || identity$1;
+    var onSuccess = options.onSuccess || identity$1;
     var onError = options.onError || defaultErrorFeedback;
     var clean = options.clean || defaultCleanFeedback;
-    var validator = when(validators.map(function (_ref) {
+    var validator = when$1(validators.map(function (_ref) {
       var _ref2 = _slicedToArray(_ref, 2),
           predicate = _ref2[0],
           validate = _ref2[1];
 
-      return [predicate, compose(apply(curry2(validate)(i18n)), mapEach([when(resolvers), identity]), fill(2))];
+      return [predicate, compose$1(apply$1(curry2$1(validate)(i18n)), mapEach$1([when$1(resolvers), identity$1]), fill$1(2))];
     }));
 
     return function (input) {
@@ -1180,17 +1409,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   function defaultErrorFeedback(input, res) {
     var prevError = document.querySelector('[name="' + input.name + '"] + .error');
     if (prevError) {
-      detachNode(prevError);
+      detachNode$1(prevError);
     }
 
-    var error = getNode('<div class=\'error\'>' + res + '</div>');
+    var error = getNode$1('<div class=\'error\'>' + res + '</div>');
     input.parentNode.insertBefore(error, input.nextElementSibling);
   }
 
   function defaultCleanFeedback(input) {
     var next = input.nextElementSibling;
     if (next && next.classList.contains('error')) {
-      detachNode(next);
+      detachNode$1(next);
     }
   }
 
@@ -1259,6 +1488,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       valuesContainer.classList.add(itemsWrapperClass);
 
+      selector.innerHTML = '<option style="display: none;"></option>';
+
       copyOptions(select, selector);
       updateDivsFromMultiple(valuesContainer, select, formatValue);
       updateSingleFromMultiple(selector, select);
@@ -1266,7 +1497,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var subscriptions = new CompositeDisposable();
 
       subscriptions.add(new DisposableEvent(selector, 'change', function (e) {
-        updateMultipleFromSingleChanges(selector, select);
+        if (options.onSelect) {
+          var res = options.onSelect(selector.value, select);
+          if (typeof res.then == 'function') {
+            res.then(function (confirm) {
+              if (confirm) {
+                updateMultipleFromSingleChanges(selector, select);
+              } else {
+                selector.selectedIndex = 0;
+              }
+            });
+          } else {
+            if (res) {
+              updateMultipleFromSingleChanges(selector, select);
+            } else {
+              selector.selectedIndex = 0;
+            }
+          }
+        } else {
+          updateMultipleFromSingleChanges(selector, select);
+        }
       }));
 
       subscriptions.add(new DisposableEvent(select, 'change', function (e) {
@@ -1277,8 +1527,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       subscriptions.add(addDelegatedEventListener(valuesContainer, 'click', '.' + itemCloseClass, function (e) {
         var value = e.target.parentNode.getAttribute('data-value');
 
-        select.querySelector('option[value="' + value + '"]').selected = false;
-        widgets.dispatch(select, 'change');
+        if (options.onUnselect) {
+          var res = options.onUnselect(value, select);
+
+          if (typeof res.then == 'function') {
+            res.then(function (confirm) {
+              if (confirm) {
+                select.querySelector('option[value="' + value + '"]').selected = false;
+                widgets.dispatch(select, 'change');
+              }
+            });
+          } else if (res) {
+            select.querySelector('option[value="' + value + '"]').selected = false;
+            widgets.dispatch(select, 'change');
+          }
+        } else {
+          select.querySelector('option[value="' + value + '"]').selected = false;
+          widgets.dispatch(select, 'change');
+        }
       }));
 
       parent$$1.appendChild(selector);
@@ -1303,7 +1569,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       singleOptions.forEach(function (option) {
         option.selected = false;
-        multipleOptions.indexOf(option.value) !== -1 ? option.style.display = 'none' : option.removeAttribute('style');
+        !option.value || multipleOptions.indexOf(option.value) !== -1 ? option.style.display = 'none' : option.removeAttribute('style');
       });
 
       eachOptgroup(single, function (group) {
@@ -1360,21 +1626,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   }
 
   var imageType = function imageType() {
-    for (var _len10 = arguments.length, ts = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-      ts[_key10] = arguments[_key10];
+    for (var _len12 = arguments.length, ts = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+      ts[_key12] = arguments[_key12];
     }
 
     var types = ts.map(function (t) {
-      return 'image/' + t;
+      return new RegExp('\\bimage/' + t + '\\b');
     });
     return function (o) {
-      return types.indexOf(o.file.type) > -1;
+      return types.some(function (re) {
+        return re.test(o.file.type);
+      });
     };
   };
 
-  var DEFAULT_PREVIEWERS = [[imageType('jpeg', 'png', 'gif', 'bmp', 'svg+xml'), function (o) {
-    return getImagePreview(o);
-  }], [always, function (o) {
+  var DEFAULT_PREVIEWERS = [[imageType('jpeg', 'png', 'gif', 'bmp', 'svg+xml'), getImagePreview], [always, function (o) {
     return Promise.resolve();
   }]];
 
@@ -1475,7 +1741,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var progress = wrapper.querySelector(progressSelector);
       var resetButton = wrapper.querySelector(resetButtonSelector);
       var onprogress = function onprogress(e) {
-        return writeValue(progress, e.loaded / e.total * 100);
+        return e.total > 0 && writeValue(progress, e.loaded / e.total * 100);
       };
 
       var composite = new CompositeDisposable();
@@ -1527,14 +1793,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         writeValue(progress, 0);
 
         return getPreview({ file: file, onprogress: onprogress }).then(function (preview) {
-          preview && preview.nodeName === 'IMG' ? preview.onload = function () {
-            writeText(dimensions, formatDimensions(preview));
-            previewLoaded(file);
-          } : previewLoaded(file);
-
           if (preview) {
             previewContainer.appendChild(preview);
           }
+
+          if (preview && preview.nodeName === 'IMG' && !preview.complete) {
+            preview.onload = function () {
+              writeText(dimensions, formatDimensions(preview));
+              previewLoaded(file);
+            };
+          } else {
+            if (preview && preview.nodeName === 'IMG') {
+              writeText(dimensions, formatDimensions(preview));
+            }
+            previewLoaded(file);
+          }
+
           filesById[input.id] = file;
           widgets.dispatch(input, 'preview:ready');
         });
@@ -1732,7 +2006,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return new Promise(function (resolve, reject) {
       var editor = new VersionEditor(source, version);
       editor.onSave = function () {
+        console.log('on save');
         var box = editor.getVersionBox();
+        console.log(editor.element);
         detachNode(editor.element);
         editor.dispose();
         resolve(box);
@@ -1770,7 +2046,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(VersionEditor, [{
       key: 'init',
       value: function init() {
-        var _this4 = this;
+        var _this5 = this;
 
         var cancelButton = this.element.querySelector('.cancel');
         var saveButton = this.element.querySelector('.save');
@@ -1779,11 +2055,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.subscriptions = new CompositeDisposable();
 
         this.subscriptions.add(new DisposableEvent(saveButton, 'click', function () {
-          _this4.onSave && _this4.onSave();
+          _this5.onSave && _this5.onSave();
         }));
 
         this.subscriptions.add(new DisposableEvent(cancelButton, 'click', function () {
-          _this4.onCancel && _this4.onCancel();
+          _this5.onCancel && _this5.onCancel();
         }));
 
         this.subscribeToDragBox();
@@ -1796,24 +2072,33 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'getVersionBox',
       value: function getVersionBox() {
-        var scale = this.clone.width / this.source.naturalWidth;
+        var scale = this.getScale();
         return [this.box.offsetLeft / scale, this.box.offsetTop / scale, this.box.offsetWidth / scale, this.box.offsetHeight / scale];
       }
     }, {
       key: 'boxToPreview',
       value: function boxToPreview(boxData) {
-        var scale = this.clone.width / this.source.naturalWidth;
+        var scale = this.getScale();
         this.updateBox(boxData[0] * scale, boxData[1] * scale, boxData[2] * scale, boxData[3] * scale);
+      }
+    }, {
+      key: 'getScale',
+      value: function getScale() {
+        // In safari, the width retrieved won't be the one we're seeing
+        // unless we're calling getComputedStyle to force a redraw.
+        var width = parseInt(window.getComputedStyle(this.clone).width, 10);
+        return width / this.source.naturalWidth;
       }
     }, {
       key: 'updateBox',
       value: function updateBox(left, top, width, height) {
+        this.box.classList.toggle('upsampling', width < this.version.width || height < this.version.height);
         this.box.style.cssText = '\n      left: ' + px(left) + ';\n      top: ' + px(top) + ';\n      width: ' + px(width) + ';\n      height: ' + px(height) + ';\n    ';
       }
     }, {
       key: 'subscribeToDragBox',
       value: function subscribeToDragBox() {
-        var _this5 = this;
+        var _this6 = this;
 
         this.dragGesture('.drag-box', function (data) {
           var b = data.containerBounds,
@@ -1822,8 +2107,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               mouseY = data.mouseY;
 
 
-          _this5.box.style.left = px(clamp(mouseX, 0, b.width - hb.width));
-          _this5.box.style.top = px(clamp(mouseY, 0, b.height - hb.height));
+          _this6.box.style.left = px(clamp(mouseX, 0, b.width - hb.width));
+          _this6.box.style.top = px(clamp(mouseY, 0, b.height - hb.height));
         });
 
         this.dragGesture('.top-handle', function (data) {
@@ -1834,11 +2119,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var y = mouseY + hb.height / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var center = bb.left + bb.width / 2;
           var newHeight = bb.bottom - y;
           var newWidth = newHeight * ratio;
-          var _contraintBoxSize = _this5.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), bb.bottom]);
+
+          var _contraintBoxSize = _this6.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), bb.bottom]);
 
           var _contraintBoxSize2 = _slicedToArray(_contraintBoxSize, 2);
 
@@ -1846,7 +2132,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize2[1];
 
 
-          _this5.updateBox(center - newWidth / 2, clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
+          _this6.updateBox(center - newWidth / 2, clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
         });
 
         this.dragGesture('.bottom-handle', function (data) {
@@ -1857,11 +2143,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var y = mouseY + hb.height / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var center = bb.left + bb.width / 2;
           var newHeight = y - bb.top;
           var newWidth = newHeight * ratio;
-          var _contraintBoxSize3 = _this5.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), b.height - bb.top]);
+
+          var _contraintBoxSize3 = _this6.contraintBoxSize([newWidth, newHeight], [Math.min(center * 2, (b.width - center) * 2), b.height - bb.top]);
 
           var _contraintBoxSize4 = _slicedToArray(_contraintBoxSize3, 2);
 
@@ -1869,7 +2156,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize4[1];
 
 
-          _this5.updateBox(center - newWidth / 2, bb.top, newWidth, newHeight);
+          _this6.updateBox(center - newWidth / 2, bb.top, newWidth, newHeight);
         });
 
         this.dragGesture('.left-handle', function (data) {
@@ -1880,11 +2167,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var x = mouseX + hb.width / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var center = bb.top + bb.height / 2;
           var newWidth = bb.right - x;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize5 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, Math.min(center * 2, (b.height - center) * 2)]);
+
+          var _contraintBoxSize5 = _this6.contraintBoxSize([newWidth, newHeight], [bb.right, Math.min(center * 2, (b.height - center) * 2)]);
 
           var _contraintBoxSize6 = _slicedToArray(_contraintBoxSize5, 2);
 
@@ -1892,7 +2180,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize6[1];
 
 
-          _this5.updateBox(clamp(bb.right - newWidth, 0, b.width), center - newHeight / 2, newWidth, newHeight);
+          _this6.updateBox(clamp(bb.right - newWidth, 0, b.width), center - newHeight / 2, newWidth, newHeight);
         });
 
         this.dragGesture('.right-handle', function (data) {
@@ -1903,11 +2191,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var x = mouseX + hb.width / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var center = bb.top + bb.height / 2;
           var newWidth = x - bb.left;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize7 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, Math.min(center * 2, (b.height - center) * 2)]);
+
+          var _contraintBoxSize7 = _this6.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, Math.min(center * 2, (b.height - center) * 2)]);
 
           var _contraintBoxSize8 = _slicedToArray(_contraintBoxSize7, 2);
 
@@ -1915,7 +2204,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize8[1];
 
 
-          _this5.updateBox(bb.left, center - newHeight / 2, newWidth, newHeight);
+          _this6.updateBox(bb.left, center - newHeight / 2, newWidth, newHeight);
         });
 
         this.dragGesture('.top-left-handle', function (data) {
@@ -1926,10 +2215,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var x = mouseX + hb.width / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var newWidth = bb.right - x;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize9 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, bb.bottom]);
+
+          var _contraintBoxSize9 = _this6.contraintBoxSize([newWidth, newHeight], [bb.right, bb.bottom]);
 
           var _contraintBoxSize10 = _slicedToArray(_contraintBoxSize9, 2);
 
@@ -1937,7 +2227,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize10[1];
 
 
-          _this5.updateBox(clamp(bb.right - newWidth, 0, b.width), clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
+          _this6.updateBox(clamp(bb.right - newWidth, 0, b.width), clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
         });
 
         this.dragGesture('.top-right-handle', function (data) {
@@ -1948,10 +2238,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var x = mouseX + hb.width / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var newWidth = x - bb.left;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize11 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.bottom]);
+
+          var _contraintBoxSize11 = _this6.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.bottom]);
 
           var _contraintBoxSize12 = _slicedToArray(_contraintBoxSize11, 2);
 
@@ -1959,7 +2250,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize12[1];
 
 
-          _this5.updateBox(bb.left, clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
+          _this6.updateBox(bb.left, clamp(bb.bottom - newHeight, 0, b.height), newWidth, newHeight);
         });
 
         this.dragGesture('.bottom-left-handle', function (data) {
@@ -1970,10 +2261,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var x = mouseX + hb.width / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var newWidth = bb.right - x;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize13 = _this5.contraintBoxSize([newWidth, newHeight], [bb.right, b.height - bb.top]);
+
+          var _contraintBoxSize13 = _this6.contraintBoxSize([newWidth, newHeight], [bb.right, b.height - bb.top]);
 
           var _contraintBoxSize14 = _slicedToArray(_contraintBoxSize13, 2);
 
@@ -1981,7 +2273,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize14[1];
 
 
-          _this5.updateBox(clamp(bb.right - newWidth, 0, b.width), bb.top, newWidth, newHeight);
+          _this6.updateBox(clamp(bb.right - newWidth, 0, b.width), bb.top, newWidth, newHeight);
         });
 
         this.dragGesture('.bottom-right-handle', function (data) {
@@ -1992,10 +2284,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
           var x = mouseX + hb.width / 2;
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var newWidth = x - bb.left;
           var newHeight = newWidth / ratio;
-          var _contraintBoxSize15 = _this5.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.height - bb.top]);
+
+          var _contraintBoxSize15 = _this6.contraintBoxSize([newWidth, newHeight], [b.width - bb.left, b.height - bb.top]);
 
           var _contraintBoxSize16 = _slicedToArray(_contraintBoxSize15, 2);
 
@@ -2003,7 +2296,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           newHeight = _contraintBoxSize16[1];
 
 
-          _this5.updateBox(bb.left, bb.top, newWidth, newHeight);
+          _this6.updateBox(bb.left, bb.top, newWidth, newHeight);
         });
 
         this.dragGesture('img', function (data) {
@@ -2013,13 +2306,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               mouseX = data.mouseX;
 
 
-          var ratio = _this5.version.getRatio();
+          var ratio = _this6.version.getRatio();
           var targetX = mouseX + offsetX;
 
           if (targetX < offsetX) {
             var newWidth = offsetX - targetX;
             var newHeight = newWidth / ratio;
-            var _contraintBoxSize17 = _this5.contraintBoxSize([newWidth, newHeight], [offsetX, offsetY]);
+
+            var _contraintBoxSize17 = _this6.contraintBoxSize([newWidth, newHeight], [offsetX, offsetY]);
 
             var _contraintBoxSize18 = _slicedToArray(_contraintBoxSize17, 2);
 
@@ -2027,11 +2321,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             newHeight = _contraintBoxSize18[1];
 
 
-            _this5.updateBox(targetX, offsetY - newHeight, newWidth, newHeight);
+            _this6.updateBox(targetX, offsetY - newHeight, newWidth, newHeight);
           } else {
             var _newWidth = targetX - offsetX;
             var _newHeight = _newWidth / ratio;
-            var _contraintBoxSize19 = _this5.contraintBoxSize([_newWidth, _newHeight], [b.width - offsetX, b.height - offsetY]);
+
+            var _contraintBoxSize19 = _this6.contraintBoxSize([_newWidth, _newHeight], [b.width - offsetX, b.height - offsetY]);
 
             var _contraintBoxSize20 = _slicedToArray(_contraintBoxSize19, 2);
 
@@ -2039,7 +2334,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _newHeight = _contraintBoxSize20[1];
 
 
-            _this5.updateBox(offsetX, offsetY, _newWidth, _newHeight);
+            _this6.updateBox(offsetX, offsetY, _newWidth, _newHeight);
           }
         });
       }
@@ -2071,7 +2366,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'dragGesture',
       value: function dragGesture(selector, handler) {
-        var _this6 = this;
+        var _this7 = this;
 
         var target = this.element.querySelector(selector);
         this.subscriptions.add(new DisposableEvent(target, 'mousedown', function (e) {
@@ -2080,16 +2375,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           var dragSubs = new CompositeDisposable();
           var handleBounds = getBoundingScreenRect(target);
-          var containerBounds = getBoundingScreenRect(_this6.container);
+          var containerBounds = getBoundingScreenRect(_this7.container);
           var offsetX = e.pageX - handleBounds.left;
           var offsetY = e.pageY - handleBounds.top;
           var boxBounds = {
-            top: _this6.box.offsetTop,
-            left: _this6.box.offsetLeft,
-            width: _this6.box.offsetWidth,
-            height: _this6.box.offsetHeight,
-            right: _this6.box.offsetLeft + _this6.box.offsetWidth,
-            bottom: _this6.box.offsetTop + _this6.box.offsetHeight
+            top: _this7.box.offsetTop,
+            left: _this7.box.offsetLeft,
+            width: _this7.box.offsetWidth,
+            height: _this7.box.offsetHeight,
+            right: _this7.box.offsetLeft + _this7.box.offsetWidth,
+            bottom: _this7.box.offsetTop + _this7.box.offsetHeight
           };
 
           dragSubs.add(new DisposableEvent(document.body, 'mousemove', function (e) {
@@ -2119,11 +2414,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             e.preventDefault();
             e.stopPropagation();
 
-            _this6.subscriptions.remove(dragSubs);
+            _this7.subscriptions.remove(dragSubs);
             dragSubs.dispose();
           }));
 
-          _this6.subscriptions.add(dragSubs);
+          _this7.subscriptions.add(dragSubs);
         }));
       }
     }]);
@@ -2243,8 +2538,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var lines = textarea.value.split(/\n/);
       var counter = 0;
 
-      for (var _len11 = arguments.length, args = Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
-        args[_key11 - 1] = arguments[_key11];
+      for (var _len13 = arguments.length, args = Array(_len13 > 1 ? _len13 - 1 : 0), _key13 = 1; _key13 < _len13; _key13++) {
+        args[_key13 - 1] = arguments[_key13];
       }
 
       for (var i = 0; i < lines.length; i++) {
@@ -2258,6 +2553,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
         counter += line.length + 1;
       }
+      return undefined;
     };
   }
 
@@ -2471,6 +2767,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       var repeater = when(repeaters);
 
+      var subscriptions = new CompositeDisposable();
+
       wrapButtons.forEach(function (button) {
         var wrap = button.getAttribute('data-wrap');
 
@@ -2478,7 +2776,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           keystrokes.push(KeyStroke.parse(button.getAttribute('data-keystroke'), button));
         }
 
-        button.addEventListener('click', function (e) {
+        subscriptions.add(new DisposableEvent(button, 'click', function (e) {
           textarea.focus();
 
           if (options[wrap]) {
@@ -2489,11 +2787,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           widgets.dispatch(textarea, 'input');
           widgets.dispatch(textarea, 'change');
-        });
+        }));
       });
 
       if (keystrokes.length > 0) {
-        textarea.addEventListener('keydown', function (e) {
+        subscriptions.add(new DisposableEvent(textarea, 'keydown', function (e) {
           var match = keystrokes.filter(function (ks) {
             return ks.matches(e);
           })[0];
@@ -2506,8 +2804,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (e.keyCode === 13) {
             checkLineRepeater(e, textarea, repeater);
           }
-        });
+        }));
       }
+
+      return subscriptions;
     };
 
     function defaultWrap(textarea, wrap) {
@@ -2521,20 +2821,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var tokens = collectMatches(wrap, /\$\w+/g);
 
       if (tokens.length) {
-        (function () {
-          var newStart = start;
-          var newEnd = end;
+        var newStart = start;
+        var newEnd = end;
 
-          collectTokens(tokens).then(function (results) {
-            eachPair(results, function (token, value) {
-              var re = new RegExp(token.replace('$', '\\$'), 'g');
-              newStart = newStart.replace(re, value);
-              newEnd = newEnd.replace(re, value);
-            });
-
-            wrapSelection(textarea, newStart, newEnd);
+        collectTokens(tokens).then(function (results) {
+          eachPair(results, function (token, value) {
+            var re = new RegExp(token.replace('$', '\\$'), 'g');
+            newStart = newStart.replace(re, value);
+            newEnd = newEnd.replace(re, value);
           });
-        })();
+
+          wrapSelection(textarea, newStart, newEnd);
+        });
       } else {
         wrapSelection(textarea, start, end);
       }

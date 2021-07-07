@@ -2,14 +2,14 @@
 'use strict';
 
 class Disposable {
-  constructor (block) {
+  constructor(block) {
     if (!block) {
-      throw new Error('A Disposable must be created with a dispose callback')
+      throw new Error('A Disposable must be created with a dispose callback');
     }
     this.block = block;
   }
 
-  dispose () {
+  dispose() {
     if (this.block) {
       this.block();
       delete this.block;
@@ -18,7 +18,7 @@ class Disposable {
 }
 
 class CompositeDisposable extends Disposable {
-  constructor (disposables = []) {
+  constructor(disposables = []) {
     super(() => {
       for (let i = 0; i < this.disposables.length; i++) {
         const disposable = this.disposables[i];
@@ -29,9 +29,9 @@ class CompositeDisposable extends Disposable {
     this.disposables = disposables;
   }
 
-  add (disposable) { this.disposables.push(disposable); }
+  add(disposable) { this.disposables.push(disposable); }
 
-  remove (disposable) {
+  remove(disposable) {
     const index = this.disposables.indexOf(disposable);
 
     if (index !== -1) { this.disposables.splice(index, 1); }
@@ -39,7 +39,7 @@ class CompositeDisposable extends Disposable {
 }
 
 class DisposableEvent extends Disposable {
-  constructor (target, event, listener) {
+  constructor(target, event, listener) {
     const events = event.split(/\s+/g);
 
     if (typeof target.addEventListener === 'function') {
@@ -49,7 +49,7 @@ class DisposableEvent extends Disposable {
       super(() => events.forEach(e => target.off(e, listener)));
       events.forEach(e => target.on(e, listener));
     } else {
-      throw new Error('The passed-in source must have either a addEventListener or on method')
+      throw new Error('The passed-in source must have either a addEventListener or on method');
     }
   }
 }
@@ -62,19 +62,19 @@ class DisposableEvent extends Disposable {
 // ##    ##    ##    ##     ##
 //  ######     ##    ########
 
-function merge (a, b) {
+function merge(a, b) {
   const c = {};
 
   for (let k in a) { c[k] = a[k]; }
   for (let k in b) { c[k] = b[k]; }
 
-  return c
+  return c;
 }
 
-function clone (object) {
+function clone(object) {
   const copy = {};
   for (let k in object) { copy[k] = object[k]; }
-  return copy
+  return copy;
 }
 
 const slice = Array.prototype.slice;
@@ -85,13 +85,13 @@ const _curry = (n, fn, curryArgs = []) => {
 
     return n > concatArgs.length
       ? _curry(n, fn, concatArgs)
-      : fn.apply(null, concatArgs)
-  }
+      : fn.apply(null, concatArgs);
+  };
 };
 
 
 
-function curryN (n, fn) { return _curry(n, fn) }
+function curryN(n, fn) { return _curry(n, fn); }
 
 const curry1 = curryN(2, curryN)(1);
 const curry2 = curryN(2, curryN)(2);
@@ -100,7 +100,7 @@ const curry4 = curryN(2, curryN)(4);
 
 const apply = curry2((fn, args) => fn.apply(null, args));
 
-const identity = a => a;
+
 const always = a => true;
 
 const head = a => a[0];
@@ -111,16 +111,13 @@ const tail = a => a.slice(1);
 const when = curry2((predicates, ...values) => {
   const doWhen = (a) => {
     const [predicate, resolve] = head(a);
-    return predicate(...values) ? resolve(...values) : doWhen(tail(a))
+    return predicate(...values) ? resolve(...values) : doWhen(tail(a));
   };
 
-  return doWhen(predicates)
+  return doWhen(predicates);
 });
 
-function compose (...fns) {
-  fns.push(apply(fns.pop()));
-  return (...args) => fns.reduceRight((memo, fn) => fn(memo), args)
-}
+
 
 
 
@@ -151,26 +148,26 @@ let previewNode;
 
 
 
-function getNode (html) {
-  if (!html) { return undefined }
+function getNode(html) {
+  if (!html) { return undefined; }
   if (previewNode == null) { previewNode = document.createElement('div'); }
 
   previewNode.innerHTML = html;
   const node = previewNode.firstElementChild;
   if (node) { previewNode.removeChild(node); }
   previewNode.innerHTML = '';
-  return node || null
+  return node || null;
 }
 
 
 
-function cloneNode (node) {
-  return node ? getNode(node.outerHTML) : undefined
+function cloneNode(node) {
+  return node ? getNode(node.outerHTML) : undefined;
 }
 
 
 
-function detachNode (node) {
+function detachNode(node) {
   node && node.parentNode && node.parentNode.removeChild(node);
 }
 
@@ -184,33 +181,33 @@ function detachNode (node) {
 // ##        ##     ## ##    ##  ##       ##   ###    ##    ##    ##
 // ##        ##     ## ##     ## ######## ##    ##    ##     ######
 
-function eachParent (node, block) {
+function eachParent(node, block) {
   let parent = node.parentNode;
 
   while (parent) {
     block(parent);
 
-    if (parent.nodeName === 'HTML') { break }
+    if (parent.nodeName === 'HTML') { break; }
     parent = parent.parentNode;
   }
 }
 
-function parents (node, selector = '*') {
+function parents(node, selector = '*') {
   const parentNodes = [];
 
   eachParent(node, (parent) => {
     if (parent.matches && parent.matches(selector)) { parentNodes.push(parent); }
   });
 
-  return parentNodes
+  return parentNodes;
 }
 
-function parent (node, selector = '*') {
-  return parents(node, selector)[0]
+function parent(node, selector = '*') {
+  return parents(node, selector)[0];
 }
 
-function nodeAndParents (node, selector = '*') {
-  return [node].concat(parents(node, selector))
+function nodeAndParents(node, selector = '*') {
+  return [node].concat(parents(node, selector));
 }
 
 // ######## ##     ## ######## ##    ## ########  ######
@@ -221,15 +218,15 @@ function nodeAndParents (node, selector = '*') {
 // ##         ## ##   ##       ##   ###    ##    ##    ##
 // ########    ###    ######## ##    ##    ##     ######
 
-function appendData (data, event) {
+function appendData(data, event) {
   if (data) { event.data = data; }
-  return event
+  return event;
 }
 
 const newEvent = (type, data, props) =>
   appendData(data, new window.Event(type, {
     bubbles: props.bubbles != null ? props.bubbles : true,
-    cancelable: props.cancelable != null ? props.cancelable : true
+    cancelable: props.cancelable != null ? props.cancelable : true,
   }));
 
 const createEvent = (type, data, props) => {
@@ -239,7 +236,7 @@ const createEvent = (type, data, props) => {
     props.bubbles != null ? props.bubbles : true,
     props.cancelable != null ? props.cancelable : true
   );
-  return appendData(data, event)
+  return appendData(data, event);
 };
 
 const createEventObject = (type, data, props) => {
@@ -248,7 +245,7 @@ const createEventObject = (type, data, props) => {
   event.cancelBubble = props.bubbles === false;
   delete props.bubbles;
   for (var k in props) { event[k] = props[k]; }
-  return appendData(data, event)
+  return appendData(data, event);
 };
 
 let domEventImplementation;
@@ -259,104 +256,53 @@ const domEvent = (type, data, props = {}) => {
       domEventImplementation = e && newEvent;
     } catch (e) {
       domEventImplementation = document.createEvent
-      ? createEvent
-      : createEventObject;
+        ? createEvent
+        : createEventObject;
     }
   }
 
-  return domEventImplementation(type, data, props)
+  return domEventImplementation(type, data, props);
 };
 
-function addDelegatedEventListener (object, event, selector, callback) {
+function addDelegatedEventListener(object, event, selector, callback) {
   if (typeof selector === 'function') {
     callback = selector;
     selector = '*';
   }
 
   const listener = e => {
-    if (e.isPropagationStopped) { return }
+    if (e.isPropagationStopped) { return; }
 
     let {target} = e;
     decorateEvent(e);
     nodeAndParents(target).forEach((node) => {
       const matched = node.matches(selector);
-      if (e.isImmediatePropagationStopped || !matched) { return }
+      if (e.isImmediatePropagationStopped || !matched) { return; }
 
       e.matchedTarget = node;
       callback(e);
     });
   };
 
-  return new DisposableEvent(object, event, listener)
+  return new DisposableEvent(object, event, listener);
 
-  function decorateEvent (e) {
+  function decorateEvent(e) {
     const overriddenStop = window.Event.prototype.stopPropagation;
-    e.stopPropagation = function () {
+    e.stopPropagation = function() {
       this.isPropagationStopped = true;
       overriddenStop.apply(this, arguments);
     };
 
     const overriddenStopImmediate = window.Event.prototype.stopImmediatePropagation;
-    e.stopImmediatePropagation = function () {
+    e.stopImmediatePropagation = function() {
       this.isImmediatePropagationStopped = true;
       overriddenStopImmediate.apply(this, arguments);
     };
   }
 }
 
-class Hash {
-  constructor () {
-    this.clear();
-  }
-
-  clear () {
-    this.keys = [];
-    this.values = [];
-  }
-
-  set (key, value) {
-    if (this.hasKey(key)) {
-      const index = this.keys.indexOf(key);
-      this.values[index] = value;
-    } else {
-      this.keys.push(key);
-      this.values.push(value);
-    }
-  }
-
-  get (key) { return this.values[ this.keys.indexOf(key) ] }
-
-  getKey (value) { return this.keys[ this.values.indexOf(value) ] }
-
-  hasKey (key) { return this.keys.indexOf(key) > -1 }
-
-  unset (key) {
-    const index = this.keys.indexOf(key);
-    this.keys.splice(index, 1);
-    this.values.splice(index, 1);
-  }
-
-  each (block) {
-    if (!block) { return }
-
-    this.values.forEach(block);
-  }
-
-  eachKey (block) {
-    if (!block) { return }
-
-    this.keys.forEach(block);
-  }
-
-  eachPair (block) {
-    if (!block) { return }
-
-    this.keys.forEach(key => block(key, this.get(key)));
-  }
-}
-
 class Widget {
-  constructor (element, handler, options, handledClass) {
+  constructor(element, handler, options, handledClass) {
     this.active = false;
     this.element = element;
     this.options = options;
@@ -372,22 +318,22 @@ class Widget {
     }
   }
 
-  activate () {
-    if (this.active) { return }
+  activate() {
+    if (this.active) { return; }
 
     this.onActivate && this.onActivate();
     this.active = true;
   }
 
-  deactivate () {
-    if (!this.active) { return }
+  deactivate() {
+    if (!this.active) { return; }
 
     this.onDeactivate && this.onDeactivate();
     this.active = false;
   }
 
-  init () {
-    if (this.initialized) { return }
+  init() {
+    if (this.initialized) { return; }
 
     this.element.classList.add(this.handledClass);
     const args = [this.element, this];
@@ -397,8 +343,8 @@ class Widget {
     this.initialized = true;
   }
 
-  dispose () {
-    if (this.disposed) { return }
+  dispose() {
+    if (this.disposed) { return; }
 
     this.element.classList.remove(this.handledClass);
 
@@ -453,9 +399,9 @@ const SUBSCRIPTIONS = {};
  *                                              at which the widget will apply
  * @param {function(el:HTMLElement):void} [block]
  */
-function widgets (name, selector, options = {}, block) {
+function widgets(name, selector, options = {}, block) {
   if (WIDGETS[name] == null) {
-    throw new Error(`Unable to find widget '${name}'`)
+    throw new Error(`Unable to find widget '${name}'`);
   }
 
   // The options specific to the widget registration and activation are
@@ -463,6 +409,7 @@ function widgets (name, selector, options = {}, block) {
   const ifCond = options.if;
   const unlessCond = options.unless;
   const targetFrame = options.targetFrame;
+  const handledClass = `${name}-handled`;
   let events = options.on || 'init';
   let mediaCondition = options.media;
   let mediaHandler;
@@ -487,30 +434,26 @@ function widgets (name, selector, options = {}, block) {
   // Events can be passed as a string with event names separated with spaces.
   if (typeof events === 'string') { events = events.split(/\s+/g); }
 
-  // The widgets instances are stored in a Hash with the DOM element they
+  // The widgets instances are stored in a Map with the DOM element they
   // target as key. The instances hashes are stored per widget type.
-  const instances = INSTANCES[name] || (INSTANCES[name] = new Hash());
+  const instances = INSTANCES[name] || (INSTANCES[name] = new Map());
 
   // This method execute a test condition for the given element. The condition
   // can be either a function or a value converted to boolean.
-  function testCondition (condition, element) {
-    return typeof condition === 'function' ? condition(element) : !!condition
+  function testCondition(condition, element) {
+    return typeof condition === 'function' ? condition(element) : !!condition;
   }
-
-  // The DOM elements handled by a widget will receive a handled class
-  // to differenciate them from unhandled elements.
-  const handledClass = `${name}-handled`;
 
   // This method will test if an element can be handled by the current widget.
   // It will test for both the handled class presence and the widget
   // conditions. Note that if both the `if` and `unless` conditions
   // are passed in the options object they will be tested as both part
   // of a single `&&` condition.
-  function canBeHandled (element) {
-    let res = !element.classList.contains(handledClass);
+  function canBeHandled(element, widget) {
+    let res = !widgets.hasBeenHandled(element, widget);
     res = ifCond ? res && testCondition(ifCond, element) : res;
     res = unlessCond ? res && !testCondition(unlessCond, element) : res;
-    return res
+    return res;
   }
 
   // If a media condition have been specified, the widget activation will be
@@ -522,18 +465,18 @@ function widgets (name, selector, options = {}, block) {
     // the minimal and maximal window width where the widget is activated.
     if (mediaCondition instanceof Object) {
       const {min, max} = mediaCondition;
-      mediaCondition = function __mediaCondition () {
+      mediaCondition = function __mediaCondition() {
         let res = true;
         const [width] = widgets.getScreenSize(targetWindow);
         res = min != null ? res && width >= min : res;
         res = max != null ? res && width <= max : res;
-        return res
+        return res;
       };
     }
 
     // The media handler is registered on the `resize` event of the `window`
     // object.
-    mediaHandler = function (element, widget) {
+    mediaHandler = function(element, widget) {
       const conditionMatched = testCondition(mediaCondition, element);
 
       if (conditionMatched && !widget.active) {
@@ -544,21 +487,23 @@ function widgets (name, selector, options = {}, block) {
     };
 
     widgets.subscribe(name, targetWindow, 'resize', () => {
-      instances.eachPair((element, widget) => mediaHandler(element, widget));
+      instances.forEach((widget, element) => mediaHandler(element, widget));
     });
   }
 
   // The `handler` function is the function registered on specified event and
   // will proceed to the creation of the widgets if the conditions are met.
-  const handler = function () {
+  const handler = function() {
     const elements = targetDocument.querySelectorAll(selector);
 
     asArray(elements).forEach((element) => {
-      if (!canBeHandled(element)) { return }
+      if (!canBeHandled(element, name)) { return; }
 
       const widget = new Widget(
-        element, elementHandle, clone(options), handledClass
-      );
+        element,
+        elementHandle,
+        clone(options),
+        handledClass);
 
       widget.init();
 
@@ -576,20 +521,33 @@ function widgets (name, selector, options = {}, block) {
   // For each event specified, the handler is registered as listener.
   // A special case is the `init` event that simply mean to trigger the
   // handler as soon a the function is called.
-  events.forEach(function (event) {
+  events.forEach(function(event) {
     switch (event) {
       case 'init':
         handler();
-        break
+        break;
       case 'load':
       case 'resize':
         widgets.subscribe(name, targetWindow, event, handler);
-        break
+        break;
       default:
         widgets.subscribe(name, targetDocument, event, handler);
     }
   });
 }
+
+/**
+ * Returns whether the specified `element` has been handled by the specified
+ * `widget` handler.
+ *
+ * @param  {HTMLElement} element the element to check whether
+ *                               it was handled or not
+ * @param  {string} widjet the name of the widget handler to check
+ *                         against the element
+ */
+widgets.hasBeenHandled = function hasBeenHandled(element, widget) {
+  return this.widgetsFor(element, widget);
+};
 
 /**
  * A helper function used to dispatch an event from a given `source` or from
@@ -599,7 +557,7 @@ function widgets (name, selector, options = {}, block) {
  * @param  {string} type the name of the event to dispatch
  * @param  {Object} [properties={}] the properties of the event to dispatch
  */
-widgets.dispatch = function dispatch (source, type, properties = {}) {
+widgets.dispatch = function dispatch(source, type, properties = {}) {
   if (typeof source === 'string') {
     properties = type || {};
     type = source;
@@ -654,7 +612,7 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
  *                                           or an object to use as the widget
  *                                           prototype
  */
-widgets.define = function (name, blockOrPrototype) {
+widgets.define = function(name, blockOrPrototype) {
   WIDGETS[name] = blockOrPrototype;
 };
 
@@ -663,8 +621,8 @@ widgets.define = function (name, blockOrPrototype) {
  * @param  {string} name the widget name
  * @return {boolean} whether the widget is defined or not
  */
-widgets.defined = function (name) {
-  return WIDGETS[name] != null
+widgets.defined = function(name) {
+  return WIDGETS[name] != null;
 };
 
 /**
@@ -672,7 +630,7 @@ widgets.defined = function (name) {
  *
  * @param  {String} name the name of the widget to delete
  */
-widgets.delete = function (name) {
+widgets.delete = function(name) {
   if (SUBSCRIPTIONS[name]) {
     SUBSCRIPTIONS[name].forEach(subscription => subscription.dispose());
   }
@@ -687,7 +645,7 @@ widgets.delete = function (name) {
  *
  * @param {...string} names the names of the wigets to delete
  */
-widgets.reset = function (...names) {
+widgets.reset = function(...names) {
   if (names.length === 0) { names = Object.keys(WIDGETS); }
 
   names.forEach(name => {
@@ -707,15 +665,15 @@ widgets.reset = function (...names) {
  * @param  {string} widget a name of a specific widget class to retrieve
  * @return {Array<Widget>|Widget} the widget(s) associated to the element
  */
-widgets.widgetsFor = function (element, widget) {
+widgets.widgetsFor = function(element, widget) {
   if (widget) {
-    return INSTANCES[widget] && INSTANCES[widget].get(element)
+    return INSTANCES[widget] && INSTANCES[widget].get(element);
   } else {
     return Object.keys(INSTANCES)
-    .map(key => INSTANCES[key])
-    .filter(instances => instances.hasKey(element))
-    .map(instances => instances.get(element))
-    .reduce((memo, arr) => memo.concat(arr), [])
+      .map(key => INSTANCES[key])
+      .filter(instances => instances.has(element))
+      .map(instances => instances.get(element))
+      .reduce((memo, arr) => memo.concat(arr), []);
   }
 };
 
@@ -724,8 +682,8 @@ widgets.widgetsFor = function (element, widget) {
  * @param  {Window} w the target window object
  * @return {array} the dimensions of the window
  */
-widgets.getScreenSize = function (w) {
-  return [w.innerWidth, w.innerHeight]
+widgets.getScreenSize = function(w) {
+  return [w.innerWidth, w.innerHeight];
 };
 
 /**
@@ -739,11 +697,11 @@ widgets.getScreenSize = function (w) {
  * @return {DisposableEvent} a disposable object to remove the subscription
  * @private
  */
-widgets.subscribe = function (name, to, evt, handler) {
+widgets.subscribe = function(name, to, evt, handler) {
   SUBSCRIPTIONS[name] || (SUBSCRIPTIONS[name] = []);
   const subscription = new DisposableEvent(to, evt, handler);
   SUBSCRIPTIONS[name].push(subscription);
-  return subscription
+  return subscription;
 };
 
 /**
@@ -754,10 +712,10 @@ widgets.subscribe = function (name, to, evt, handler) {
  *
  * @param {...string} names
  */
-widgets.release = function (...names) {
+widgets.release = function(...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.dispose());
+    INSTANCES[name] && INSTANCES[name].forEach(value => value.dispose());
   });
 };
 
@@ -766,10 +724,10 @@ widgets.release = function (...names) {
  *
  * @param  {...string} names [description]
  */
-widgets.activate = function (...names) {
+widgets.activate = function(...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.activate());
+    INSTANCES[name] && INSTANCES[name].forEach(value => value.activate());
   });
 };
 
@@ -778,12 +736,251 @@ widgets.activate = function (...names) {
  *
  * @param  {...string} names [description]
  */
-widgets.deactivate = function (...names) {
+widgets.deactivate = function(...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.deactivate());
+    INSTANCES[name] && INSTANCES[name].forEach(value => value.deactivate());
   });
 };
+
+class Disposable$1 {
+  constructor (block) {
+    if (!block) {
+      throw new Error('A Disposable must be created with a dispose callback')
+    }
+    this.block = block;
+  }
+
+  dispose () {
+    if (this.block) {
+      this.block();
+      delete this.block;
+    }
+  }
+}
+
+class CompositeDisposable$1 extends Disposable$1 {
+  constructor (disposables = []) {
+    super(() => {
+      for (let i = 0; i < this.disposables.length; i++) {
+        const disposable = this.disposables[i];
+        disposable.dispose();
+      }
+    });
+
+    this.disposables = disposables;
+  }
+
+  add (disposable) { this.disposables.push(disposable); }
+
+  remove (disposable) {
+    const index = this.disposables.indexOf(disposable);
+
+    if (index !== -1) { this.disposables.splice(index, 1); }
+  }
+}
+
+class DisposableEvent$1 extends Disposable$1 {
+  constructor (target, event, listener) {
+    const events = event.split(/\s+/g);
+
+    if (typeof target.addEventListener === 'function') {
+      super(() => events.forEach(e => target.removeEventListener(e, listener)));
+      events.forEach(e => target.addEventListener(e, listener));
+    } else if (typeof target.on === 'function') {
+      super(() => events.forEach(e => target.off(e, listener)));
+      events.forEach(e => target.on(e, listener));
+    } else {
+      throw new Error('The passed-in source must have either a addEventListener or on method')
+    }
+  }
+}
+
+//  ######  ######## ########
+// ##    ##    ##    ##     ##
+// ##          ##    ##     ##
+//  ######     ##    ##     ##
+//       ##    ##    ##     ##
+// ##    ##    ##    ##     ##
+//  ######     ##    ########
+
+
+
+
+
+const slice$1 = Array.prototype.slice;
+
+const _curry$1 = (n, fn, curryArgs = []) => {
+  return (...args) => {
+    const concatArgs = curryArgs.concat(args);
+
+    return n > concatArgs.length
+      ? _curry$1(n, fn, concatArgs)
+      : fn.apply(null, concatArgs)
+  }
+};
+
+
+
+function curryN$1 (n, fn) { return _curry$1(n, fn) }
+
+const curry1$1 = curryN$1(2, curryN$1)(1);
+const curry2$1 = curryN$1(2, curryN$1)(2);
+const curry3$1 = curryN$1(2, curryN$1)(3);
+const curry4$1 = curryN$1(2, curryN$1)(4);
+
+const apply$1 = curry2$1((fn, args) => fn.apply(null, args));
+
+const identity$1 = a => a;
+const always$1 = a => true;
+
+const head$1 = a => a[0];
+
+const tail$1 = a => a.slice(1);
+
+
+const when$1 = curry2$1((predicates, ...values) => {
+  const doWhen = (a) => {
+    const [predicate, resolve] = head$1(a);
+    return predicate(...values) ? resolve(...values) : doWhen(tail$1(a))
+  };
+
+  return doWhen(predicates)
+});
+
+function compose$1 (...fns) {
+  fns.push(apply$1(fns.pop()));
+  return (...args) => fns.reduceRight((memo, fn) => fn(memo), args)
+}
+
+
+
+const asArray$1 = (collection) => slice$1.call(collection);
+const asPair$1 = (object) => Object.keys(object).map((k) => [k, object[k]]);
+
+
+
+
+
+
+
+const fill$1 = curry2$1((len, value) => new Array(len).fill(value));
+
+const mapEach$1 = curry2$1((maps, values) =>
+  values.map((v, i) => maps[i % maps.length](v))
+);
+
+// ########   #######  ##     ##
+// ##     ## ##     ## ###   ###
+// ##     ## ##     ## #### ####
+// ##     ## ##     ## ## ### ##
+// ##     ## ##     ## ##     ##
+// ##     ## ##     ## ##     ##
+// ########   #######  ##     ##
+
+let previewNode$1;
+
+
+
+function getNode$1 (html) {
+  if (!html) { return undefined }
+  if (previewNode$1 == null) { previewNode$1 = document.createElement('div'); }
+
+  previewNode$1.innerHTML = html;
+  const node = previewNode$1.firstElementChild;
+  if (node) { previewNode$1.removeChild(node); }
+  previewNode$1.innerHTML = '';
+  return node || null
+}
+
+
+
+
+
+
+
+function detachNode$1 (node) {
+  node && node.parentNode && node.parentNode.removeChild(node);
+}
+
+
+
+// ########     ###    ########  ######## ##    ## ########  ######
+// ##     ##   ## ##   ##     ## ##       ###   ##    ##    ##    ##
+// ##     ##  ##   ##  ##     ## ##       ####  ##    ##    ##
+// ########  ##     ## ########  ######   ## ## ##    ##     ######
+// ##        ######### ##   ##   ##       ##  ####    ##          ##
+// ##        ##     ## ##    ##  ##       ##   ###    ##    ##    ##
+// ##        ##     ## ##     ## ######## ##    ##    ##     ######
+
+function eachParent$1 (node, block) {
+  let parent = node.parentNode;
+
+  while (parent) {
+    block(parent);
+
+    if (parent.nodeName === 'HTML') { break }
+    parent = parent.parentNode;
+  }
+}
+
+function parents$1 (node, selector = '*') {
+  const parentNodes = [];
+
+  eachParent$1(node, (parent) => {
+    if (parent.matches && parent.matches(selector)) { parentNodes.push(parent); }
+  });
+
+  return parentNodes
+}
+
+function parent$1 (node, selector = '*') {
+  return parents$1(node, selector)[0]
+}
+
+function nodeAndParents$1 (node, selector = '*') {
+  return [node].concat(parents$1(node, selector))
+}
+
+// ######## ##     ## ######## ##    ## ########  ######
+// ##       ##     ## ##       ###   ##    ##    ##    ##
+// ##       ##     ## ##       ####  ##    ##    ##
+// ######   ##     ## ######   ## ## ##    ##     ######
+// ##        ##   ##  ##       ##  ####    ##          ##
+// ##         ## ##   ##       ##   ###    ##    ##    ##
+// ########    ###    ######## ##    ##    ##     ######
+
+function appendData$1 (data, event) {
+  if (data) { event.data = data; }
+  return event
+}
+
+const newEvent$1 = (type, data, props) =>
+  appendData$1(data, new window.Event(type, {
+    bubbles: props.bubbles != null ? props.bubbles : true,
+    cancelable: props.cancelable != null ? props.cancelable : true
+  }));
+
+const createEvent$1 = (type, data, props) => {
+  const event = document.createEvent('Event');
+  event.initEvent(
+    type,
+    props.bubbles != null ? props.bubbles : true,
+    props.cancelable != null ? props.cancelable : true
+  );
+  return appendData$1(data, event)
+};
+
+const createEventObject$1 = (type, data, props) => {
+  const event = document.createEventObject();
+  event.type = type;
+  event.cancelBubble = props.bubbles === false;
+  delete props.bubbles;
+  for (var k in props) { event[k] = props[k]; }
+  return appendData$1(data, event)
+};
+
+let domEventImplementation$1;
 
 function inputPredicate (...types) {
   return input => input.nodeName === 'INPUT' && types.indexOf(input.type) > -1
@@ -815,10 +1012,10 @@ const escDot = s => s.replace('.', '\\.');
 
 const compact = a => a.filter(v => v != null);
 
-const getFileValidator = when([
+const getFileValidator = when$1([
   [s => /^\./.test(s), s => f => match(`${escDot(s)}$`, f.name)],
   [s => /\/\*/.test(s), s => f => match(`^${s.replace('*', '')}`, f.type)],
-  [always, s => f => f.type === s]
+  [always$1, s => f => f.type === s]
 ]);
 
 
@@ -826,28 +1023,28 @@ const getFileValidator = when([
 var DEFAULT_VALIDATORS = [
   [inputPredicate('email'), validateEmail],
   [inputPredicate('checkbox'), validateChecked],
-  [always, validatePresence]
+  [always$1, validatePresence]
 ];
 
 var DEFAULT_RESOLVERS = [
   [inputPredicate('checkbox'), i => i.checked],
   [inputPredicate('number', 'range'), i => i.value && parseFloat(i.value)],
-  [inputPredicate('radio'), i => radioValue(parent(i, 'form'), i.name)],
+  [inputPredicate('radio'), i => radioValue(parent$1(i, 'form'), i.name)],
   [inputPredicate('file'), i => i.files],
   [selectPredicate(true), i => optionValues(i)],
   [selectPredicate(false), i => optionValues(i)[0]],
-  [always, i => i.value]
+  [always$1, i => i.value]
 ];
 
 function optionValues (input) {
-  return asArray(input.querySelectorAll('option'))
+  return asArray$1(input.querySelectorAll('option'))
   .filter(o => o.selected)
   .map(o => o.value)
 }
 
 function radioValue (form, name) {
   const checked = form &&
-    asArray(form.querySelectorAll(`[name="${name}"]`)).filter(i => i.checked)[0];
+    asArray$1(form.querySelectorAll(`[name="${name}"]`)).filter(i => i.checked)[0];
   return checked ? checked.value : undefined
 }
 
@@ -860,9 +1057,9 @@ widgets.define('live-validation', (options) => {
 
     if (options.validateOnInit) { input.validate(); }
 
-    return new CompositeDisposable([
-      new DisposableEvent(input, events, () => input.validate()),
-      new Disposable(() => delete input.validate)
+    return new CompositeDisposable$1([
+      new DisposableEvent$1(input, events, () => input.validate()),
+      new Disposable$1(() => delete input.validate)
     ])
   }
 });
@@ -876,16 +1073,16 @@ widgets.define('form-validation', (options) => {
 
   return (form) => {
     form.validate = () =>
-      asArray(form.querySelectorAll(required)).reduce(reducer, false);
+      asArray$1(form.querySelectorAll(required)).reduce(reducer, false);
 
     if (options.validateOnInit) { form.validate(); }
 
-    return new CompositeDisposable([
-      new Disposable(() => {
+    return new CompositeDisposable$1([
+      new Disposable$1(() => {
         form.removeAttribute('novalidate');
         delete form.validate;
       }),
-      new DisposableEvent(form, events, (e) => {
+      new DisposableEvent$1(form, events, (e) => {
         const hasErrors = form.validate();
         if (hasErrors) {
           e.stopImmediatePropagation();
@@ -900,17 +1097,17 @@ widgets.define('form-validation', (options) => {
 function getValidator (options) {
   const validators = (options.validators || []).concat(DEFAULT_VALIDATORS);
   const resolvers = (options.resolvers || []).concat(DEFAULT_RESOLVERS);
-  const i18n = options.i18n || identity;
-  const onSuccess = options.onSuccess || identity;
+  const i18n = options.i18n || identity$1;
+  const onSuccess = options.onSuccess || identity$1;
   const onError = options.onError || defaultErrorFeedback;
   const clean = options.clean || defaultCleanFeedback;
-  const validator = when(validators.map(([predicate, validate]) =>
+  const validator = when$1(validators.map(([predicate, validate]) =>
     [
       predicate,
-      compose(
-        apply(curry2(validate)(i18n)),
-        mapEach([when(resolvers), identity]),
-        fill(2)
+      compose$1(
+        apply$1(curry2$1(validate)(i18n)),
+        mapEach$1([when$1(resolvers), identity$1]),
+        fill$1(2)
       )
     ]
   ));
@@ -926,59 +1123,59 @@ function getValidator (options) {
 
 function defaultErrorFeedback (input, res) {
   const prevError = document.querySelector(`[name="${input.name}"] + .error`);
-  if (prevError) { detachNode(prevError); }
+  if (prevError) { detachNode$1(prevError); }
 
-  const error = getNode(`<div class='error'>${res}</div>`);
+  const error = getNode$1(`<div class='error'>${res}</div>`);
   input.parentNode.insertBefore(error, input.nextElementSibling);
 }
 
 function defaultCleanFeedback (input) {
   const next = input.nextElementSibling;
-  if (next && next.classList.contains('error')) { detachNode(next); }
+  if (next && next.classList.contains('error')) { detachNode$1(next); }
 }
 
 const isNode = curry2((name, node) => {
-  return node.nodeName === name.toUpperCase()
+  return node.nodeName === name.toUpperCase();
 });
 
 const isOption = isNode('option');
 const isOptgroup = isNode('optgroup');
 
-function copyOptions (from, to) {
+function copyOptions(from, to) {
   const content = asArray(from.children);
   content.map(child =>
     isOptgroup(child) ? copyOptgroup(child) : copyOption(child)
   )
-  .forEach(copy => to.appendChild(copy));
+    .forEach(copy => to.appendChild(copy));
 }
 
-function copyOptgroup (optgroup) {
+function copyOptgroup(optgroup) {
   const copy = document.createElement('optgroup');
   copy.label = optgroup.label;
   copyOptions(optgroup, copy);
-  return copy
+  return copy;
 }
 
-function copyOption (option) {
+function copyOption(option) {
   const copy = document.createElement('option');
   copy.value = option.value;
   copy.textContent = option.textContent;
-  return copy
+  return copy;
 }
 
-function optionsOf (select) {
-  return asArray(select.querySelectorAll('option'))
+function optionsOf(select) {
+  return asArray(select.querySelectorAll('option'));
 }
 
-function eachOptgroup (node, block) {
+function eachOptgroup(node, block) {
   asArray(node.children).filter(n => isOptgroup(n)).forEach(group => {
     eachOptgroup(group, block);
     block(group);
   });
 }
 
-function selectedOptionsOf (select) {
-  return optionsOf(select).filter(option => option.selected)
+function selectedOptionsOf(select) {
+  return optionsOf(select).filter(option => option.selected);
 }
 
 widgets.define('select-multiple', (options) => {
@@ -999,6 +1196,8 @@ widgets.define('select-multiple', (options) => {
 
     valuesContainer.classList.add(itemsWrapperClass);
 
+    selector.innerHTML = '<option style="display: none;"></option>';
+
     copyOptions(select, selector);
     updateDivsFromMultiple(valuesContainer, select, formatValue);
     updateSingleFromMultiple(selector, select);
@@ -1006,7 +1205,26 @@ widgets.define('select-multiple', (options) => {
     const subscriptions = new CompositeDisposable();
 
     subscriptions.add(new DisposableEvent(selector, 'change', (e) => {
-      updateMultipleFromSingleChanges(selector, select);
+      if (options.onSelect) {
+        const res = options.onSelect(selector.value, select);
+        if (typeof res.then == 'function') {
+          res.then(confirm => {
+            if (confirm) {
+              updateMultipleFromSingleChanges(selector, select);
+            } else {
+              selector.selectedIndex = 0;
+            }
+          });
+        } else {
+          if (res) {
+            updateMultipleFromSingleChanges(selector, select);
+          } else {
+            selector.selectedIndex = 0;
+          }
+        }
+      } else {
+        updateMultipleFromSingleChanges(selector, select);
+      }
     }));
 
     subscriptions.add(new DisposableEvent(select, 'change', (e) => {
@@ -1017,31 +1235,47 @@ widgets.define('select-multiple', (options) => {
     subscriptions.add(addDelegatedEventListener(valuesContainer, 'click', `.${itemCloseClass}`, (e) => {
       const value = e.target.parentNode.getAttribute('data-value');
 
-      select.querySelector(`option[value="${value}"]`).selected = false;
-      widgets.dispatch(select, 'change');
+      if (options.onUnselect) {
+        const res = options.onUnselect(value, select);
+
+        if (typeof res.then == 'function') {
+          res.then(confirm => {
+            if (confirm) {
+              select.querySelector(`option[value="${value}"]`).selected = false;
+              widgets.dispatch(select, 'change');
+            }
+          });
+        } else if (res) {
+          select.querySelector(`option[value="${value}"]`).selected = false;
+          widgets.dispatch(select, 'change');
+        }
+      } else {
+        select.querySelector(`option[value="${value}"]`).selected = false;
+        widgets.dispatch(select, 'change');
+      }
     }));
 
     parent$$1.appendChild(selector);
     parent$$1.appendChild(valuesContainer);
 
-    return subscriptions
-  }
+    return subscriptions;
+  };
 
-  function wrapSelect (select) {
+  function wrapSelect(select) {
     const parent$$1 = document.createElement('div');
     parent$$1.classList.add(wrapperClass);
     select.parentNode.insertBefore(parent$$1, select);
     parent$$1.appendChild(select);
-    return parent$$1
+    return parent$$1;
   }
 
-  function updateSingleFromMultiple (single, multiple) {
+  function updateSingleFromMultiple(single, multiple) {
     const singleOptions = optionsOf(single);
     const multipleOptions = selectedOptionsOf(multiple).map(option => option.value);
 
     singleOptions.forEach((option) => {
       option.selected = false;
-      multipleOptions.indexOf(option.value) !== -1
+      !option.value || multipleOptions.indexOf(option.value) !== -1
         ? option.style.display = 'none'
         : option.removeAttribute('style');
     });
@@ -1053,7 +1287,7 @@ widgets.define('select-multiple', (options) => {
     });
   }
 
-  function updateMultipleFromSingleChanges (single, multiple) {
+  function updateMultipleFromSingleChanges(single, multiple) {
     const multipleOptions = selectedOptionsOf(multiple);
     const singleOptions = selectedOptionsOf(single);
     const added = singleOptions.filter(option => multipleOptions.indexOf(option.value) === -1)[0];
@@ -1062,7 +1296,7 @@ widgets.define('select-multiple', (options) => {
     widgets.dispatch(multiple, 'change');
   }
 
-  function updateDivsFromMultiple (container, multiple, formatValue) {
+  function updateDivsFromMultiple(container, multiple, formatValue) {
     const multipleOptions = selectedOptionsOf(multiple);
     const multipleOptionsValues = multipleOptions.map(option => option.value);
 
@@ -1079,7 +1313,7 @@ widgets.define('select-multiple', (options) => {
     });
   }
 
-  function defaultFormatValue (option) {
+  function defaultFormatValue(option) {
     const div = document.createElement('div');
     div.classList.add(itemClass);
     div.setAttribute('data-value', option.value);
@@ -1090,24 +1324,24 @@ widgets.define('select-multiple', (options) => {
       </button>
     `;
 
-    return div
+    return div;
   }
 });
 
 const previewsByFileKeys = {};
 
-function fileKey (file) {
-  return `${file.name}-${file.type}-${file.size}-${file.lastModified}`
+function fileKey(file) {
+  return `${file.name}-${file.type}-${file.size}-${file.lastModified}`;
 }
 
 const imageType = (...ts) => {
-  const types = ts.map(t => `image/${t}`);
-  return o => types.indexOf(o.file.type) > -1
+  const types = ts.map(t => new RegExp(`\\bimage/${t}\\b`));
+  return o => types.some(re => re.test(o.file.type));
 };
 
 const DEFAULT_PREVIEWERS = [
-  [imageType('jpeg', 'png', 'gif', 'bmp', 'svg+xml'), o => getImagePreview(o)],
-  [always, o => Promise.resolve()]
+  [imageType('jpeg', 'png', 'gif', 'bmp', 'svg+xml'), getImagePreview],
+  [always, o => Promise.resolve()],
 ];
 
 const previewBuilder = (previewers = []) => {
@@ -1116,44 +1350,44 @@ const previewBuilder = (previewers = []) => {
     const key = fileKey(o.file);
     return previewsByFileKeys[key]
       ? previewsByFileKeys[key]
-      : previewsByFileKeys[key] = previewer(o)
-  }
+      : previewsByFileKeys[key] = previewer(o);
+  };
 };
 
-function disposePreview (file) {
+function disposePreview(file) {
   delete previewsByFileKeys[fileKey(file)];
 }
 
 
 
-function getImagePreview ({file, onprogress}) {
+function getImagePreview({file, onprogress}) {
   return new Promise((resolve, reject) => {
     const reader = new window.FileReader();
     reader.onload = (e) => resolve(getNode(`<img src="${e.target.result}">`));
     reader.onerror = reject;
     reader.onprogress = onprogress;
     reader.readAsDataURL(file);
-  })
+  });
 }
 
-function getTextPreview ({file, onprogress}) {
+function getTextPreview({file, onprogress}) {
   return new Promise((resolve, reject) => {
     const reader = new window.FileReader();
     reader.onload = (e) => resolve(getNode(`<pre>${e.target.result}</pre>`));
     reader.onerror = reject;
     reader.onprogress = onprogress;
     reader.readAsText(file);
-  })
+  });
 }
 
-function getPDFPreview ({file, onprogress}) {
+function getPDFPreview({file, onprogress}) {
   return new Promise((resolve, reject) => {
     const reader = new window.FileReader();
     reader.onload = (e) => resolve(getNode(`<iframe src="${e.target.result}"></iframe>`));
     reader.onerror = reject;
     reader.onprogress = onprogress;
     reader.readAsDataURL(file);
-  })
+  });
 }
 
 let id = 0;
@@ -1161,7 +1395,9 @@ const nextId = () => `file-input-${++id}`;
 
 widgets.define('file-preview', (options) => {
   const {
-    wrap, previewSelector, nameMetaSelector, mimeMetaSelector, dimensionsMetaSelector, sizeMetaSelector, progressSelector, resetButtonSelector, formatSize, formatDimensions
+    wrap, previewSelector, nameMetaSelector, mimeMetaSelector,
+    dimensionsMetaSelector, sizeMetaSelector, progressSelector,
+    resetButtonSelector, formatSize, formatDimensions,
   } = merge(defaults, options);
 
   const getPreview = previewBuilder(options.previewers);
@@ -1181,7 +1417,7 @@ widgets.define('file-preview', (options) => {
     const mime = wrapper.querySelector(mimeMetaSelector);
     const progress = wrapper.querySelector(progressSelector);
     const resetButton = wrapper.querySelector(resetButtonSelector);
-    const onprogress = (e) => writeValue(progress, (e.loaded / e.total) * 100);
+    const onprogress = (e) => e.total > 0 && writeValue(progress, (e.loaded / e.total) * 100);
 
     const composite = new CompositeDisposable();
 
@@ -1202,14 +1438,14 @@ widgets.define('file-preview', (options) => {
       createPreviewFromURL();
     }
 
-    return composite
+    return composite;
 
-    function createPreview () {
+    function createPreview() {
       const file = input.files[0];
       file && createFilePreview(file);
     }
 
-    function createPreviewFromURL () {
+    function createPreviewFromURL() {
       wrapper.classList.add('loading');
       const url = new window.URL(input.getAttribute('data-file'));
       const req = new window.XMLHttpRequest();
@@ -1227,25 +1463,31 @@ widgets.define('file-preview', (options) => {
       req.send();
     }
 
-    function createFilePreview (file) {
+    function createFilePreview(file) {
       wrapper.classList.add('loading');
       writeValue(progress, 0);
 
       return getPreview({file, onprogress}).then((preview) => {
-        preview && preview.nodeName === 'IMG'
-          ? preview.onload = () => {
+        if (preview) { previewContainer.appendChild(preview); }
+
+        if (preview && preview.nodeName === 'IMG' && !preview.complete) {
+          preview.onload = () => {
             writeText(dimensions, formatDimensions(preview));
             previewLoaded(file);
+          };
+        } else {
+          if (preview && preview.nodeName === 'IMG') {
+            writeText(dimensions, formatDimensions(preview));
           }
-          : previewLoaded(file);
+          previewLoaded(file);
+        }
 
-        if (preview) { previewContainer.appendChild(preview); }
         filesById[input.id] = file;
         widgets.dispatch(input, 'preview:ready');
-      })
+      });
     }
 
-    function previewLoaded (file) {
+    function previewLoaded(file) {
       writeText(size, formatSize(file.size));
       writeText(name, file.name);
       writeText(mime, file.type);
@@ -1253,7 +1495,7 @@ widgets.define('file-preview', (options) => {
       widgets.dispatch(input, 'preview:loaded');
     }
 
-    function resetField () {
+    function resetField() {
       if (filesById[input.id]) {
         disposePreview(filesById[input.id]);
         delete filesById[input.id];
@@ -1266,7 +1508,7 @@ widgets.define('file-preview', (options) => {
       writeText(mime, '');
       writeText(dimensions, '');
     }
-  }
+  };
 });
 
 const filesById = {};
@@ -1320,8 +1562,8 @@ const defaults = {
 
     const label = wrapper.querySelector('label');
     label.parentNode.insertBefore(input, label);
-    return wrapper
-  }
+    return wrapper;
+  },
 };
 
 const ratio = ([w, h]) => w / h;
@@ -1329,7 +1571,7 @@ const ratio = ([w, h]) => w / h;
 const dimensions = (img) => [img.naturalWidth, img.naturalHeight];
 
 class Version {
-  constructor (name, size) {
+  constructor(name, size) {
     this.name = name;
     this.size = size;
     this.targetBox = [0, 0].concat(size);
@@ -1337,20 +1579,20 @@ class Version {
     this.height = last(size);
   }
 
-  setBox (box) {
+  setBox(box) {
     this.box = box;
   }
 
-  getVersion (image) {
+  getVersion(image) {
     const [canvas, context] = this.getCanvas();
     context.clearRect(...this.targetBox);
     context.drawImage(image, ...this.getBox(image));
-    return canvas
+    return canvas;
   }
 
-  getRatio () { return ratio(this.size) }
+  getRatio() { return ratio(this.size); }
 
-  getCanvas () {
+  getCanvas() {
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
       this.context = this.canvas.getContext('2d');
@@ -1358,39 +1600,39 @@ class Version {
       this.canvas.width = this.width;
       this.canvas.height = this.height;
     }
-    return [this.canvas, this.context]
+    return [this.canvas, this.context];
   }
 
-  getBox (image) {
+  getBox(image) {
     return this.box
       ? this.box.concat(this.targetBox)
-      : this.getDefaultBox(image)
+      : this.getDefaultBox(image);
   }
 
-  getDefaultBox (image) {
+  getDefaultBox(image) {
     return ratio(dimensions(image)) > this.getRatio()
       ? this.getDefaultHorizontalBox(image)
-      : this.getDefaultVerticalBox(image)
+      : this.getDefaultVerticalBox(image);
   }
 
-  getDefaultHorizontalBox (image) {
+  getDefaultHorizontalBox(image) {
     const width = image.naturalHeight * this.getRatio();
     return [
       (image.naturalWidth - width) / 2,
       0,
       width,
-      image.naturalHeight
-    ].concat(this.targetBox)
+      image.naturalHeight,
+    ].concat(this.targetBox);
   }
 
-  getDefaultVerticalBox (image) {
+  getDefaultVerticalBox(image) {
     const height = image.naturalWidth / this.getRatio();
     return [
       0,
       (image.naturalHeight - height) / 2,
       image.naturalWidth,
-      height
-    ].concat(this.targetBox)
+      height,
+    ].concat(this.targetBox);
   }
 }
 
@@ -1406,17 +1648,19 @@ const getBoundingScreenRect = (node) => {
       top: bounds.top + document.body.scrollTop + document.documentElement.scrollTop,
       bottom: bounds.bottom + document.body.scrollTop + document.documentElement.scrollTop,
       width: bounds.width,
-      height: bounds.height
+      height: bounds.height,
     };
   }
-  return bounds
+  return bounds;
 };
 
-function editVersion (source, version) {
+function editVersion(source, version) {
   return new Promise((resolve, reject) => {
     const editor = new VersionEditor(source, version);
     editor.onSave = () => {
+      console.log('on save');
       const box = editor.getVersionBox();
+      console.log(editor.element);
       detachNode(editor.element);
       editor.dispose();
       resolve(box);
@@ -1429,11 +1673,11 @@ function editVersion (source, version) {
 
     document.body.appendChild(editor.element);
     editor.init();
-  })
+  });
 }
 
 class VersionEditor {
-  constructor (source, version) {
+  constructor(source, version) {
     const node = getNode(`
       <div class="version-editor">
         <div class="version-preview">
@@ -1469,7 +1713,7 @@ class VersionEditor {
     this.container = container;
   }
 
-  init () {
+  init() {
     const cancelButton = this.element.querySelector('.cancel');
     const saveButton = this.element.querySelector('.save');
     this.boxToPreview(this.version.getBox(this.source));
@@ -1487,22 +1731,22 @@ class VersionEditor {
     this.subscribeToDragBox();
   }
 
-  dispose () {
+  dispose() {
     this.subscriptions.dispose();
   }
 
-  getVersionBox () {
-    const scale = this.clone.width / this.source.naturalWidth;
+  getVersionBox() {
+    const scale = this.getScale();
     return [
       this.box.offsetLeft / scale,
       this.box.offsetTop / scale,
       this.box.offsetWidth / scale,
-      this.box.offsetHeight / scale
-    ]
+      this.box.offsetHeight / scale,
+    ];
   }
 
-  boxToPreview (boxData) {
-    const scale = this.clone.width / this.source.naturalWidth;
+  boxToPreview(boxData) {
+    const scale = this.getScale();
     this.updateBox(
       boxData[0] * scale,
       boxData[1] * scale,
@@ -1511,7 +1755,15 @@ class VersionEditor {
     );
   }
 
-  updateBox (left, top, width, height) {
+  getScale() {
+    // In safari, the width retrieved won't be the one we're seeing
+    // unless we're calling getComputedStyle to force a redraw.
+    const width = parseInt(window.getComputedStyle(this.clone).width, 10);
+    return width / this.source.naturalWidth;
+  }
+
+  updateBox(left, top, width, height) {
+    this.box.classList.toggle('upsampling', width < this.version.width || height < this.version.height);
     this.box.style.cssText = `
       left: ${px(left)};
       top: ${px(top)};
@@ -1520,7 +1772,7 @@ class VersionEditor {
     `;
   }
 
-  subscribeToDragBox () {
+  subscribeToDragBox() {
     this.dragGesture('.drag-box', (data) => {
       const {containerBounds: b, handleBounds: hb, mouseX, mouseY} = data;
 
@@ -1530,18 +1782,20 @@ class VersionEditor {
 
     this.dragGesture('.top-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseY
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseY,
       } = data;
 
       const y = mouseY + (hb.height / 2);
       const ratio = this.version.getRatio();
       const center = bb.left + bb.width / 2;
       let newHeight = bb.bottom - y;
-      let newWidth = newHeight * ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newWidth = newHeight * ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
         Math.min(center * 2, (b.width - center) * 2),
-        bb.bottom
+        bb.bottom,
       ]);
 
       this.updateBox(
@@ -1554,18 +1808,20 @@ class VersionEditor {
 
     this.dragGesture('.bottom-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseY
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseY,
       } = data;
 
       const y = mouseY + (hb.height / 2);
       const ratio = this.version.getRatio();
       const center = bb.left + bb.width / 2;
       let newHeight = y - bb.top;
-      let newWidth = newHeight * ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newWidth = newHeight * ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
         Math.min(center * 2, (b.width - center) * 2),
-        b.height - bb.top
+        b.height - bb.top,
       ]);
 
       this.updateBox(
@@ -1578,18 +1834,20 @@ class VersionEditor {
 
     this.dragGesture('.left-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX,
       } = data;
 
       const x = mouseX + (hb.width / 2);
       const ratio = this.version.getRatio();
       const center = bb.top + bb.height / 2;
       let newWidth = bb.right - x;
-      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newHeight = newWidth / ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
         bb.right,
-        Math.min(center * 2, (b.height - center) * 2)
+        Math.min(center * 2, (b.height - center) * 2),
       ]);
 
       this.updateBox(
@@ -1602,18 +1860,20 @@ class VersionEditor {
 
     this.dragGesture('.right-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX,
       } = data;
 
       const x = mouseX + (hb.width / 2);
       const ratio = this.version.getRatio();
       const center = bb.top + bb.height / 2;
       let newWidth = x - bb.left;
-      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newHeight = newWidth / ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
         b.width - bb.left,
-        Math.min(center * 2, (b.height - center) * 2)
+        Math.min(center * 2, (b.height - center) * 2),
       ]);
 
       this.updateBox(
@@ -1626,16 +1886,18 @@ class VersionEditor {
 
     this.dragGesture('.top-left-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX,
       } = data;
 
       const x = mouseX + (hb.width / 2);
       const ratio = this.version.getRatio();
       let newWidth = bb.right - x;
-      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newHeight = newWidth / ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
-        bb.right, bb.bottom
+        bb.right, bb.bottom,
       ]);
 
       this.updateBox(
@@ -1648,16 +1910,18 @@ class VersionEditor {
 
     this.dragGesture('.top-right-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX,
       } = data;
 
       const x = mouseX + (hb.width / 2);
       const ratio = this.version.getRatio();
       let newWidth = x - bb.left;
-      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newHeight = newWidth / ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
-        b.width - bb.left, b.bottom
+        b.width - bb.left, b.bottom,
       ]);
 
       this.updateBox(
@@ -1670,16 +1934,18 @@ class VersionEditor {
 
     this.dragGesture('.bottom-left-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX,
       } = data;
 
       const x = mouseX + (hb.width / 2);
       const ratio = this.version.getRatio();
       let newWidth = bb.right - x;
-      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newHeight = newWidth / ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
-        bb.right, b.height - bb.top
+        bb.right, b.height - bb.top,
       ]);
 
       this.updateBox(
@@ -1692,16 +1958,18 @@ class VersionEditor {
 
     this.dragGesture('.bottom-right-handle', (data) => {
       const {
-        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX
+        containerBounds: b, handleBounds: hb, boxBounds: bb, mouseX,
       } = data;
 
       const x = mouseX + (hb.width / 2);
       const ratio = this.version.getRatio();
       let newWidth = x - bb.left;
-      let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-        newWidth, newHeight
+      let newHeight = newWidth / ratio;
+
+      [newWidth, newHeight] = this.contraintBoxSize([
+        newWidth, newHeight,
       ], [
-        b.width - bb.left, b.height - bb.top
+        b.width - bb.left, b.height - bb.top,
       ]);
 
       this.updateBox(
@@ -1714,7 +1982,7 @@ class VersionEditor {
 
     this.dragGesture('img', (data) => {
       const {
-        containerBounds: b, offsetX, offsetY, mouseX
+        containerBounds: b, offsetX, offsetY, mouseX,
       } = data;
 
       const ratio = this.version.getRatio();
@@ -1722,10 +1990,12 @@ class VersionEditor {
 
       if (targetX < offsetX) {
         let newWidth = offsetX - targetX;
-        let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-          newWidth, newHeight
+        let newHeight = newWidth / ratio;
+
+        [newWidth, newHeight] = this.contraintBoxSize([
+          newWidth, newHeight,
         ], [
-          offsetX, offsetY
+          offsetX, offsetY,
         ]);
 
         this.updateBox(
@@ -1736,10 +2006,12 @@ class VersionEditor {
         );
       } else {
         let newWidth = targetX - offsetX;
-        let newHeight = newWidth / ratio;[newWidth, newHeight] = this.contraintBoxSize([
-          newWidth, newHeight
+        let newHeight = newWidth / ratio;
+
+        [newWidth, newHeight] = this.contraintBoxSize([
+          newWidth, newHeight,
         ], [
-          b.width - offsetX, b.height - offsetY
+          b.width - offsetX, b.height - offsetY,
         ]);
 
         this.updateBox(
@@ -1752,7 +2024,7 @@ class VersionEditor {
     });
   }
 
-  contraintBoxSize ([width, height], [maxWidth, maxHeight]) {
+  contraintBoxSize([width, height], [maxWidth, maxHeight]) {
     const ratio = this.version.getRatio();
 
     if (width > maxWidth) {
@@ -1765,10 +2037,10 @@ class VersionEditor {
       width = height * ratio;
     }
 
-    return [width, height]
+    return [width, height];
   }
 
-  dragGesture (selector, handler) {
+  dragGesture(selector, handler) {
     const target = this.element.querySelector(selector);
     this.subscriptions.add(new DisposableEvent(target, 'mousedown', (e) => {
       e.preventDefault();
@@ -1785,7 +2057,7 @@ class VersionEditor {
         width: this.box.offsetWidth,
         height: this.box.offsetHeight,
         right: this.box.offsetLeft + this.box.offsetWidth,
-        bottom: this.box.offsetTop + this.box.offsetHeight
+        bottom: this.box.offsetTop + this.box.offsetHeight,
       };
 
       dragSubs.add(new DisposableEvent(document.body, 'mousemove', (e) => {
@@ -1801,13 +2073,13 @@ class VersionEditor {
             width: target.offsetWidth,
             height: target.offsetHeight,
             right: target.offsetLeft + target.offsetWidth,
-            bottom: target.offsetTop + target.offsetHeight
+            bottom: target.offsetTop + target.offsetHeight,
           },
           offsetX, offsetY,
           pageX: e.pageX,
           pageY: e.pageY,
           mouseX: e.pageX - (containerBounds.left + offsetX),
-          mouseY: e.pageY - (containerBounds.top + offsetY)
+          mouseY: e.pageY - (containerBounds.top + offsetY),
         });
       }));
 
@@ -1839,7 +2111,7 @@ widgets.define('file-versions', (options) => {
       </div>
     `);
     div.appendChild(canvas, div.firstChild);
-    return div
+    return div;
   });
   return (input, widget) => {
     const container = parent(input, '.file-input');
@@ -1891,25 +2163,25 @@ widgets.define('file-versions', (options) => {
           });
         }
       }),
-      new Disposable(() => versionsSubs && versionsSubs.dispose())
-    ])
+      new Disposable(() => versionsSubs && versionsSubs.dispose()),
+    ]);
 
-    function collectVersions () {
+    function collectVersions() {
       return asPair(versions).reduce((memo, [name, version]) => {
         memo[name] = version.box;
-        return memo
-      }, {})
+        return memo;
+      }, {});
     }
-  }
+  };
 });
 
-function insertText (textarea, start, end, text) {
+function insertText(textarea, start, end, text) {
   textarea.value = textarea.value.substring(0, start) +
                    text +
                    textarea.value.substring(end, textarea.value.length);
 }
 
-function wrapSelection (textarea, prefix, suffix) {
+function wrapSelection(textarea, prefix, suffix) {
   const start = textarea.selectionStart;
   const end = textarea.selectionEnd;
   const selectedText = textarea.value.substring(start, end);
@@ -1921,7 +2193,7 @@ function wrapSelection (textarea, prefix, suffix) {
   textarea.selectionEnd = end + prefix.length;
 }
 
-function collectMatches (string, regex) {
+function collectMatches(string, regex) {
   let match;
   const matches = [];
 
@@ -1929,24 +2201,25 @@ function collectMatches (string, regex) {
     matches.push(match[0]);
   }
 
-  return matches
+  return matches;
 }
 
-function scanLines (block) {
-  return function (textarea, ...args) {
+function scanLines(block) {
+  return function(textarea, ...args) {
     const lines = textarea.value.split(/\n/);
     let counter = 0;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const result = block({
-        textarea, line, lineIndex: i, charIndex: counter
+        textarea, line, lineIndex: i, charIndex: counter,
       }, ...args);
 
-      if (result != null) { return result }
+      if (result != null) { return result; }
       counter += line.length + 1;
     }
-  }
+    return undefined;
+  };
 }
 
 const lineAt = scanLines(({line, charIndex}, index) =>
@@ -1975,7 +2248,7 @@ const lineEndIndexAtCursor = (textarea) =>
 const wholeLinesContaining = (textarea, start, end = start) => {
   const s = Math.min(lineStartIndexAt(textarea, start), start);
   const e = Math.max(lineEndIndexAt(textarea, end), end);
-  return [s, e, textarea.value.substring(s, e)]
+  return [s, e, textarea.value.substring(s, e)];
 };
 
 const wholeLinesAtCursor = (textarea) =>
@@ -1993,37 +2266,37 @@ var utils = {
   patchLines,
   scanLines,
   wholeLinesAtCursor,
-  wholeLinesContaining
+  wholeLinesContaining,
 };
 
 class KeyStroke {
-  static parse (str, button) {
+  static parse(str, button) {
     const strokes = str.split(/-|\+/);
     const key = strokes.pop();
     const modifiers = {
       ctrl: false,
       shift: false,
       alt: false,
-      meta: false
+      meta: false,
     };
 
     strokes.forEach((stroke) => modifiers[stroke.toLowerCase()] = true);
 
-    return new KeyStroke(key, modifiers, button)
+    return new KeyStroke(key, modifiers, button);
   }
-  constructor (key, modifiers, trigger) {
+  constructor(key, modifiers, trigger) {
     this.key = key;
     this.modifiers = modifiers;
     this.trigger = trigger;
   }
-  matches (event) {
+  matches(event) {
     const key = event.char || event.key || String.fromCharCode(event.keyCode);
 
     return key === this.key &&
            event.ctrlKey === this.modifiers.ctrl &&
            event.shiftKey === this.modifiers.shift &&
            event.altKey === this.modifiers.alt &&
-           event.metaKey === this.modifiers.meta
+           event.metaKey === this.modifiers.meta;
   }
 }
 
@@ -2032,14 +2305,14 @@ var Markdown = {
     const [start, end, string] = wholeLinesAtCursor(textarea);
     const newSelection = patchLines(string, line => `> ${line}`);
 
-    return [start, end, newSelection]
+    return [start, end, newSelection];
   },
 
   codeBlock: (textarea) => {
     const [start, end, string] = wholeLinesAtCursor(textarea);
     const newSelection = patchLines(string, line => `    ${line}`);
 
-    return [start, end, newSelection]
+    return [start, end, newSelection];
   },
 
   orderedList: (textarea) => {
@@ -2048,7 +2321,7 @@ var Markdown = {
       i === 0 ? `1. ${line}` : `  ${line}`
     );
 
-    return [start, end, newSelection]
+    return [start, end, newSelection];
   },
 
   unorderedList: (textarea) => {
@@ -2057,14 +2330,14 @@ var Markdown = {
       i === 0 ? `- ${line}` : `  ${line}`
     );
 
-    return [start, end, newSelection]
+    return [start, end, newSelection];
   },
 
   // Repeaters
   repeatOrderedList: [
     (line) => line.match(/^\d+\. /),
-    (line) => `${parseInt(line.match(/^\d+/)[0], 10) + 1}. `
-  ]
+    (line) => `${parseInt(line.match(/^\d+/)[0], 10) + 1}. `,
+  ],
 };
 
 const escapeRegExp = (s) => s.replace(/[$^\[\]().+?*]/g, '\\$1');
@@ -2076,9 +2349,9 @@ widgets.define('text-editor', (options) => {
     return new Promise((resolve) => {
       resolve(tokens.reduce((memo, token) => {
         memo[token] = window.prompt(token.replace('$', ''));
-        return memo
+        return memo;
       }, {}));
-    })
+    });
   });
 
   return (el) => {
@@ -2089,17 +2362,19 @@ widgets.define('text-editor', (options) => {
     const repeaters = asArray(nodesWithRepeater).map((n) => {
       const s = n.getAttribute('data-next-line-repeater');
       if (options[s]) {
-        return options[s]
+        return options[s];
       } else {
         return [
           (line) => line.match(new RegExp(`^${escapeRegExp(s)}`)),
-          (line) => s
-        ]
+          (line) => s,
+        ];
       }
     });
     repeaters.push([a => true, a => undefined]);
 
     const repeater = when(repeaters);
+
+    const subscriptions = new CompositeDisposable();
 
     wrapButtons.forEach((button) => {
       const wrap = button.getAttribute('data-wrap');
@@ -2108,7 +2383,7 @@ widgets.define('text-editor', (options) => {
         keystrokes.push(KeyStroke.parse(button.getAttribute('data-keystroke'), button));
       }
 
-      button.addEventListener('click', (e) => {
+      subscriptions.add(new DisposableEvent(button, 'click', (e) => {
         textarea.focus();
 
         if (options[wrap]) {
@@ -2119,11 +2394,11 @@ widgets.define('text-editor', (options) => {
 
         widgets.dispatch(textarea, 'input');
         widgets.dispatch(textarea, 'change');
-      });
+      }));
     });
 
     if (keystrokes.length > 0) {
-      textarea.addEventListener('keydown', (e) => {
+      subscriptions.add(new DisposableEvent(textarea, 'keydown', (e) => {
         const match = keystrokes.filter(ks => ks.matches(e))[0];
 
         if (match) {
@@ -2134,11 +2409,13 @@ widgets.define('text-editor', (options) => {
         if (e.keyCode === 13) {
           checkLineRepeater(e, textarea, repeater);
         }
-      });
+      }));
     }
-  }
 
-  function defaultWrap (textarea, wrap) {
+    return subscriptions;
+  };
+
+  function defaultWrap(textarea, wrap) {
     const [start, end] = wrap.replace(/\\\|/g, '[__PIPE__]').split('|').map(s => s.replace(/\[__PIPE__\]/g, '|'));
     const tokens = collectMatches(wrap, /\$\w+/g);
 
@@ -2161,7 +2438,7 @@ widgets.define('text-editor', (options) => {
   }
 });
 
-function checkLineRepeater (event, textarea, repeater) {
+function checkLineRepeater(event, textarea, repeater) {
   const line = lineAtCursor(textarea);
   const next = line && repeater(line);
 

@@ -537,6 +537,17 @@ progress {
       position: absolute;
       border: 1px solid #0ab2ff;
       box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.3); }
+      .version-editor .version-preview .version-box.upsampling {
+        border-color: #eb9230; }
+        .version-editor .version-preview .version-box.upsampling .top-handle,
+        .version-editor .version-preview .version-box.upsampling .left-handle,
+        .version-editor .version-preview .version-box.upsampling .bottom-handle,
+        .version-editor .version-preview .version-box.upsampling .right-handle,
+        .version-editor .version-preview .version-box.upsampling .top-left-handle,
+        .version-editor .version-preview .version-box.upsampling .top-right-handle,
+        .version-editor .version-preview .version-box.upsampling .bottom-right-handle,
+        .version-editor .version-preview .version-box.upsampling .bottom-left-handle {
+          background: #eb9230; }
       .version-editor .version-preview .version-box:before {
         content: "";
         pointer-events: none;
