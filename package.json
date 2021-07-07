@@ -38,10 +38,10 @@
     "standard": "^5.4.1",
     "widjet": "^1.2.0",
     "widjet-disposables": "^1.0",
-    "widjet-file-upload": "^1.0",
+    "widjet-file-upload": "^1.1.4",
+    "widjet-json-form": "^1.1.0",
     "widjet-select-multiple": "^1.1.1",
     "widjet-text-editor": "^1.1.0",
-    "widjet-json-form": "^1.1.0",
     "widjet-utils": "^1.1",
     "widjet-validation": "^1.1"
   },
